@@ -1,4 +1,4 @@
-# expert-system
+# expert-system (WIP)
 ---
 NOT ¬
 AND ∧
