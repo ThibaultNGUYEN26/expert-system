@@ -1,0 +1,21 @@
+# SIMPLE OR OPERATOR
+
+# Rules
+A | B => C  # A or B implies C
+
+# Facts
+=A          # A is True
+
+# Queries
+?C          # What is the value of C?
+
+# Result
+# Query: C
+# Rule that concludes C: A and B implies C
+#   Subgoals: A, B
+#       A: Fact says A is True
+#       B: Undetermined
+#   Subgoal: A or B
+#       A or B is True + Undetermined = True
+#   Since A or B is True then C is True
+# Result C is True
