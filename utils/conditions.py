@@ -1,6 +1,6 @@
 class Conditions:
 
-    def and_operation(operand1, operand2) -> bool:
+    def and_operation(self, operand1, operand2) -> bool:
         """
         Compute the conjunction (AND) of two boolean operands.
 
@@ -17,7 +17,7 @@ class Conditions:
         return operand1 & operand2
 
 
-    def or_operation(operand1, operand2) -> bool:
+    def or_operation(self, operand1, operand2) -> bool:
         """
         Compute the conjunction (OR) of two boolean operands.
 
@@ -34,7 +34,7 @@ class Conditions:
         return operand1 | operand2
 
 
-    def xor_operation(operand1, operand2) -> bool:
+    def xor_operation(self, operand1, operand2) -> bool:
         """
         Compute the conjunction (XOR) of two boolean operands.
 
@@ -51,7 +51,7 @@ class Conditions:
         return operand1 ^ operand2
 
 
-    def not_operation(operand) -> bool:
+    def not_operation(self, operand) -> bool:
         """
         Compute the negation of a boolean operand.
 
@@ -64,7 +64,7 @@ class Conditions:
         return not operand
 
 
-    def and_conclusions_operation(operand1, operand2) -> bool:
+    def and_conclusions_operation(self, operand1, operand2) -> bool:
         """
 
 
