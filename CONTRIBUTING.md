@@ -81,20 +81,20 @@ Closes #17
 
 ## Issues
 
-When creating an issue:
-1. Add context (what’s the problem?).
-2. Describe the expected solution.
-3. Define acceptance criteria (how we know it’s done).
+Use the following naming convention for issue titles:
+- `[Feature] <short description>` → for new features
+- `[Bug] <short description>` → for bugs
+- `[Docs] <short description>` → for documentation tasks
+- `[Chore] <short description>` → for maintenance
 
-### Example feature issue
-**Title:** `[Feature] Add backward chaining`
-**Description:**
-- Implement backward chaining algorithm.
-- Must support AND/OR rules.
-- Stop on circular dependencies.
+⚠️ The brackets `[]` indicate the **category label**.
+Replace the text inside with the type of issue.
+Do **not** include the brackets themselves in the description.
 
-**Acceptance criteria:**
-- Given ruleset X, query Y returns expected result.
-- Tests cover edge cases (circular, undefined facts).
+### Examples
+- `[Feature] Add backward chaining`
+- `[Bug] Infinite loop in inference engine`
+- `[Docs] Add usage section to README`
+- `[Chore] Setup GitHub Actions workflow`
 
 ---
