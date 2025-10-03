@@ -1,0 +1,24 @@
+# MULTIPLE AND OPERATORS
+
+# Rules
+D + E + F => G  # D and E and F implies G
+
+# Facts
+=DEF            # D is True, E is True, F is True
+
+# Queries
+?G              # What is the value of G?
+
+# Result
+# Query: G
+# Rule that concludes G: D and E and F implies G
+#   Subgoals: D, E, F
+#       D: Fact says D is True
+#       E: Fact says E is True
+#       F: Fact says F is True
+#   Subgoal: D and E
+#       D and E is True + True = True
+#   Subgoal: (D and E) and F
+#       (D and E) and F is True + True = True
+#   Since D and E and F is True then G is True
+# Result G is True

@@ -1,9 +1,0 @@
-# Rules
-A + B => C
-A + C => D
-
-# Facts
-=AB
-
-# Queries
-?C D

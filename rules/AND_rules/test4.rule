@@ -1,0 +1,22 @@
+# NOT AND OPERATOR
+
+# Rules
+K + L => M  # K and L implies M
+
+# Facts
+=K          # K is True
+!L          # Not L is True
+
+# Queries
+?M          # What is the value of M?
+
+# Result
+# Query: M
+# Rule that concludes M: K and L implies M
+#   Subgoals: H, I
+#       H: Fact says I is True
+#       I: Undetermined
+#   Subgoal: H and I
+#       H and I is Undetermined since I is Undetermined
+#   Since H and I is Undetermined then G is Undetermined
+# Result G is Undetermined

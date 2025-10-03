@@ -1,0 +1,21 @@
+# MIXING AND OPERATOR
+
+# Rules
+A + B => C      # A and B implies C
+D + E + F => G  # D and E and F implies G
+H + I => J      # H and I implies J
+K + L => M      # K and L implies M
+C + G => X      # C and G implies X
+X + J => Y      # X and J implies Y
+Y + M => Z      # Y and M implies Z
+
+# Facts
+=ABDEFKH        # A, B, D, E, F, K, H are True
+!L              # Not L is True
+
+# Queries
+? Z             # What is the value of Z?
+
+# Result
+# Y and M implies Z
+#
