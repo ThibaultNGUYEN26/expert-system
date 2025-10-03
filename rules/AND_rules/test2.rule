@@ -16,9 +16,11 @@ D + E + F => G  # D and E and F implies G
 #       D: Fact says D is True
 #       E: Fact says E is True
 #       F: Fact says F is True
-#   Subgoal: D and E
-#       D and E is True + True = True
-#   Subgoal: (D and E) and F
-#       (D and E) and F is True + True = True
+#   Subgoals: D and E and F
+#       Subgoal: D and E
+#           D and E is True + True = True
+#       Subgoal: (D and E) and F
+#           (D and E) and F is True + True = True
+#       Since (D and E) and F is True then D and E and F is True
 #   Since D and E and F is True then G is True
 # Result G is True

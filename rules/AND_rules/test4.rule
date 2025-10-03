@@ -5,7 +5,7 @@ K + L => M  # K and L implies M
 
 # Facts
 =K          # K is True
-!L          # Not L is True
+!L          # Not L is True (so L is False)
 
 # Queries
 ?M          # What is the value of M?
@@ -13,10 +13,10 @@ K + L => M  # K and L implies M
 # Result
 # Query: M
 # Rule that concludes M: K and L implies M
-#   Subgoals: H, I
-#       H: Fact says I is True
-#       I: Undetermined
-#   Subgoal: H and I
-#       H and I is Undetermined since I is Undetermined
-#   Since H and I is Undetermined then G is Undetermined
-# Result G is Undetermined
+#   Subgoals: K, L
+#       K: Fact says K is True
+#       L: Fact says Not L is True → therefore L is False
+#   Subgoal: K and L
+#       K and L is True + False = False
+#   Since K and L is False then M is False
+# Result M is False
