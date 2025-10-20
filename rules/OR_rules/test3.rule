@@ -1,0 +1,21 @@
+# UNDEFINED OR OPERATOR
+
+# Rules
+H | I => J  # H or I implies J
+
+# Facts
+=H          # H is True
+
+# Queries
+?J          # What is the value of J?
+
+# Result
+# Query: J
+# Rule that concludes J: H or I implies J
+#   Subgoals: H, I
+#       H: Fact says H is True
+#       I: Undetermined
+#   Subgoal: H or I
+#       H or I is True | Undetermined = True
+#   Since H or I is True then J is True
+# Result J is True

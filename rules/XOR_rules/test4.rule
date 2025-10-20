@@ -1,0 +1,22 @@
+# NOT XOR OPERATOR
+
+# Rules
+K ^ L => M  # K xor L implies M
+
+# Facts
+=K          # K is True
+!L          # Not L is True (so L is False)
+
+# Queries
+?M          # What is the value of M?
+
+# Result
+# Query: M
+# Rule that concludes M: K xor L implies M
+#   Subgoals: K, L
+#       K: Fact says K is True
+#       L: Fact says Not L is True → therefore L is False
+#   Subgoal: K or L
+#       K xor L is True ^ False = True
+#   Since K xor L is True then M is True
+# Result M is True

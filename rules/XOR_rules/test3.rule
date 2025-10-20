@@ -1,0 +1,21 @@
+# UNDEFINED XOR OPERATOR
+
+# Rules
+H ^ I => J  # H xor I implies J
+
+# Facts
+=H          # H is True
+
+# Queries
+?J          # What is the value of J?
+
+# Result
+# Query: J
+# Rule that concludes J: H xor I implies J
+#   Subgoals: H, I
+#       H: Fact says H is True
+#       I: Undetermined
+#   Subgoal: H xor I
+#       H xor I is True ^ Undetermined = Undetermined
+#   Since H xor I is Undetermined then J is Undetermined
+# Result J is Undetermined

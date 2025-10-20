@@ -1,0 +1,69 @@
+# MIXING OR OPERATOR
+
+# Rules
+A | B => C      # A or B implies C
+D | E | F => G  # D or E or F implies G
+H | I => J      # H or I implies J
+K | L => M      # K or L implies M
+C | G => X      # C or G implies X
+X | J => Y      # X or J implies Y
+Y | M => Z      # Y or M implies Z
+
+# Facts
+=ABDEFKH        # A, B, D, E, F, K, H are True
+!L              # Not L is True
+
+# Queries
+?Z              # What is the value of Z?
+
+# Result
+# Query: Z
+# Rule that concludes Z: Y or M implies Z
+#   Subgoals: Y, M
+#       Y: Rule says that X or J implies Y
+#           Subgoals: X, J
+#               X: Rule says that C or G implies X
+#                   Subgoals: C, G
+#                       C: Rule says that A or B implies C
+#                           Subgoals: A, B
+#                               A: Fact says that A is True
+#                               B: Fact says that B is True
+#                           Subgoal: A or B
+#                               A or B is True | True = True
+#                           Since A or B is True then C is True
+#                       G: Rule says that D or E or F is True
+#                           Subgoals: D, E, F
+#                               D: Fact says that D is True
+#                               E: Fact says that E is True
+#                               F: Fact says that F is True
+#                           Subgoals: D or E or F
+#                               Subgoal: D or E
+#                                   D or E is True | True = True
+#                               Subgoal: (D or E) or F
+#                                   (D or E) or F is True | True = True
+#                               Since (D or E) or F is True then D or E or F is True
+#                           Since D or E or F is True then G is True
+#                   Subgoal: C or G
+#                       C or G is True | True = True
+#                   Since C or G is True then X is True
+#               J: Rule says that H or I implies J
+#                   Subgoals: H, I
+#                       H: Fact says that H is True
+#                       I: Undetermined
+#                   Subgoal: H or I
+#                       H or I is True | Undetermined = True
+#                   Since H or I is True then J is True
+#           Subgoal: X or J
+#               X or J is True | True = True
+#           Since X or J is True then Y is True
+#       M: Rule says that K or L implies M
+#           Subgoals: K, L
+#               K: Fact says that K is True
+#               L: Fact says that Not L is True
+#                   Not L is True then L is False
+#           Subgoal: K or L
+#               K or L is True | False = True
+#           Since K or L is True then M is True
+#   Subgoal: Y or M
+#       Y or M is True | True = True
+#   Since Y or M is True then Z is True

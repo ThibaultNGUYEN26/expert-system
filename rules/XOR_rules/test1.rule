@@ -1,7 +1,7 @@
-# SIMPLE OR OPERATOR
+# SIMPLE XOR OPERATOR
 
 # Rules
-A | B => C  # A or B implies C
+A ^ B => C  # A xor B implies C
 
 # Facts
 =AB         # A is True, B is True
@@ -15,7 +15,7 @@ A | B => C  # A or B implies C
 #   Subgoals: A, B
 #       A: Fact says A is True
 #       B: Fact says B is True
-#   Subgoal: A or B
-#       A or B is True | True = True
-#   Since A or B is True then C is True
-# Result C is True
+#   Subgoal: A xor B
+#       A xor B is True ^ True = False
+#   Since A xor B is False then C is False
+# Result C is False

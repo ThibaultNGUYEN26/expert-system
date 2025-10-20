@@ -1,0 +1,69 @@
+# MIXING XOR OPERATOR
+
+# Rules
+A ^ B => C      # A xor B implies C
+D ^ E ^ F => G  # D xor E xor F implies G
+H ^ I => J      # H xor I implies J
+K ^ L => M      # K xor L implies M
+C ^ G => X      # C xor G implies X
+X ^ J => Y      # X xor J implies Y
+Y ^ M => Z      # Y xor M implies Z
+
+# Facts
+=ABDEFKH        # A, B, D, E, F, K, H are True
+!L              # Not L is True
+
+# Queries
+?Z              # What is the value of Z?
+
+# Result
+# Query: Z
+# Rule that concludes Z: Y xor M implies Z
+#   Subgoals: Y, M
+#       Y: Rule says that X xor J implies Y
+#           Subgoals: X, J
+#               X: Rule says that C xor G implies X
+#                   Subgoals: C, G
+#                       C: Rule says that A xor B implies C
+#                           Subgoals: A, B
+#                               A: Fact says that A is True
+#                               B: Fact says that B is True
+#                           Subgoal: A or B
+#                               A xor B is True ^ True = False
+#                           Since A xor B is False then C is False
+#                       G: Rule says that D or E or F is True
+#                           Subgoals: D, E, F
+#                               D: Fact says that D is True
+#                               E: Fact says that E is True
+#                               F: Fact says that F is True
+#                           Subgoals: D xor E xor F
+#                               Subgoal: D xor E
+#                                   D xor E is True ^ True = False
+#                               Subgoal: (D xor E) xor F
+#                                   (D xor E) xor F is False ^ True = True
+#                               Since (D xor E) xor F is True then D xor E xor F is True
+#                           Since D xor E xor F is True then G is True
+#                   Subgoal: C xor G
+#                       C xor G is False ^ True = True
+#                   Since C xor G is True then X is True
+#               J: Rule says that H xor I implies J
+#                   Subgoals: H, I
+#                       H: Fact says that H is True
+#                       I: Undetermined
+#                   Subgoal: H xor I
+#                       H xor I is True ^ Undetermined = Undetermined
+#                   Since H xor I is Undetermined then J is Undetermined
+#           Subgoal: X xor J
+#               X xor J is True ^ Undetermined = Undetermined
+#           Since X xor J is Undetermined then Y is Undetermined
+#       M: Rule says that K xor L implies M
+#           Subgoals: K, L
+#               K: Fact says that K is True
+#               L: Fact says that Not L is True
+#                   Not L is True then L is False
+#           Subgoal: K xor L
+#               K xor L is True ^ False = True
+#           Since K xor L is True then M is True
+#   Subgoal: Y xor M
+#       Y xor M is Undetermined ^ True = Undetermined
+#   Since Y xor M is Undetermined then Z is Undetermined

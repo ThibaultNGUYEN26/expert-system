@@ -1,0 +1,26 @@
+# MULTIPLE OR OPERATORS
+
+# Rules
+D | E | F => G  # D or E or F implies G
+
+# Facts
+=DEF            # D is True, E is True, F is True
+
+# Queries
+?G              # What is the value of G?
+
+# Result
+# Query: G
+# Rule that concludes G: D or E or F implies G
+#   Subgoals: D, E, F
+#       D: Fact says D is True
+#       E: Fact says E is True
+#       F: Fact says F is True
+#   Subgoals: D or E or F
+#       Subgoal: D or E
+#           D or E is True | True = True
+#       Subgoal: (D or E) or F
+#           (D or E) or F is True | True = True
+#       Since (D or E) or F is True then D or E or F is True
+#   Since D or E or F is True then G is True
+# Result G is True

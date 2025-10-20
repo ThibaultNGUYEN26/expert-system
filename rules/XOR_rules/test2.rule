@@ -1,0 +1,26 @@
+# MULTIPLE XOR OPERATORS
+
+# Rules
+D ^ E ^ F => G  # D xor E xor F implies G
+
+# Facts
+=DEF            # D is True, E is True, F is True
+
+# Queries
+?G              # What is the value of G?
+
+# Result
+# Query: G
+# Rule that concludes G: D xor E xor F implies G
+#   Subgoals: D, E, F
+#       D: Fact says D is True
+#       E: Fact says E is True
+#       F: Fact says F is True
+#   Subgoals: D xor E xor F
+#       Subgoal: D xor E
+#           D xor E is True ^ True = False
+#       Subgoal: (D xor E) xor F
+#           (D xor E) xor F is False ^ True = True
+#       Since (D xor E) xor F is True then D xor E xor F is True
+#   Since D xor E xor F is True then G is True
+# Result G is True
