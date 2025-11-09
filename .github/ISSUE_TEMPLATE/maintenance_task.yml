@@ -1,0 +1,30 @@
+---
+name: "Maintenance task"
+description: "Chores, refactors, or tooling updates"
+title: "[MAINT] <short summary>"
+labels:
+  - chore
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      placeholder: Clean up utils imports
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why / context
+      description: Briefly explain what triggered this cleanup.
+      placeholder: Linter warns about unused helpers.
+  - type: textarea
+    id: plan
+    attributes:
+      label: Plan
+      description: Bullet list of steps or files you expect to touch.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Drop links, follow-up tasks, or reviewers.
