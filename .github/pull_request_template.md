@@ -1,11 +1,5 @@
 ## Summary
-- …
+- Write the changes that were made here
 
-## Testing
-- [ ] `python main.py rules/...`
-- [ ] Additional manual / unit tests
-
-## Checklist
-- [ ] Peer reviewed together
-- [ ] Meets 42 subject requirements
-- [ ] Docs/README updated if needed
+## Issue Links
+- Closes #
