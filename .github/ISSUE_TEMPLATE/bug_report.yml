@@ -1,0 +1,45 @@
+---
+name: "Bug report"
+description: "Report broken deductions or crashes"
+title: "[BUG] <short summary>"
+labels:
+  - bug
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: One-line description of the problem.
+      placeholder: Wrong result when rule T is chained with U
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Commands or inputs that trigger the bug.
+      placeholder: |
+        1. python main.py rules/AND_rules/test4.rule
+        2. Query: =AB
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      placeholder: Engine should answer "A is true"
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result / logs
+      description: Paste the output or describe what you observed.
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra info
+      description: Mention environment, related files, or quick ideas for a fix.

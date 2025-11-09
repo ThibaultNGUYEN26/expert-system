@@ -1,0 +1,35 @@
+---
+name: "Feature request"
+description: "Suggest new behavior or polish"
+title: "[FEAT] <short summary>"
+labels:
+  - feature
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      placeholder: Add CLI flag to show reasoning tree
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or need
+      description: What pain point or subject requirement drives this?
+      placeholder: Evaluators ask how we deduce each answer.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Outline the idea at a high level (files, data flow, UX).
+      placeholder: Print visited rules whenever --explain is passed.
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Sketch acceptance criteria, links, or dependencies.
