@@ -70,7 +70,7 @@ We also write formulas with:
 
 ### OR (`|`)
 
-| A | B | A | B |
+| A | B | A \| B |
 |---|---|-------|
 | F | F | F     |
 | F | T | T     |
