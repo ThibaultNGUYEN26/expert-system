@@ -31,6 +31,78 @@ See CONTRIBUTING.md for our branching, commit, and PR conventions.
 
 # 0. Truth tables
 
+Before implementing the expert system, we define the behaviour of each logical operator using truth tables.
+
+We use:
+- `T` = true  
+- `F` = false  
+
+We also write formulas with:
+- `!A`  → NOT A  
+- `A + B` → A AND B  
+- `A | B` → A OR B  
+- `A ^ B` → A XOR B  
+- `A => B` → A implies B  
+- `A <=> B` → A if and only if B (logical equivalence)
+
+## 0.1 Unary operator
+
+### NOT (`!`)
+
+| A | !A |
+|---|----|
+| F | T  |
+| T | F  |
+
+## 0.2 Binary operators: AND, OR, XOR
+
+### AND (`+`)
+
+| A | B | A + B |
+|---|---|-------|
+| F | F | F     |
+| F | T | F     |
+| T | F | F     |
+| T | T | T     |
+
+### OR (`|`)
+
+| A | B | A | B |
+|---|---|-------|
+| F | F | F     |
+| F | T | T     |
+| T | F | T     |
+| T | T | T     |
+
+### XOR (`^`)
+
+| A | B | A ^ B |
+|---|---|-------|
+| F | F | F     |
+| F | T | T     |
+| T | F | T     |
+| T | T | F     |
+
+## 0.3 : Implies, If and only if
+
+### Implies (`=>`)
+
+| A | B | A => B |
+|---|---|--------|
+| F | F |        |
+| F | T |        |
+| T | F |        |
+| T | T |        |
+
+### If and only if (`<=>`)
+
+| A | B | A <=> B |
+|---|---|---------|
+| F | F |         |
+| F | T |         |
+| T | F |         |
+| T | T |         |
+
 # 1. Lexer - Transform text to tokens
 
 ## 1.1 Define the tokens type
