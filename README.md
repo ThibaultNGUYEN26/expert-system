@@ -12,6 +12,9 @@ See CONTRIBUTING.md for our branching, commit, and PR conventions.
 
 ### Table of Contents
 - [0. Truth tables](#0-truth-tables)
+  - [0.1 Unary operator](#01-unary-operator)
+  - [0.2 Binary operators: AND, OR, XOR](#02-binary-operators-and-or-xor)
+  - [0.3 Implies, If and only if](#03-implies-if-and-only-if)
 - [1. Lexer - Transform text to tokens](#1-lexer---transform-text-to-tokens)
   - [1.1 Define the tokens type](#11-define-the-tokens-type)
   - [1.2 Lexer logic](#12-lexer-logic)
@@ -83,25 +86,35 @@ We also write formulas with:
 | T | F | T     |
 | T | T | F     |
 
-## 0.3 : Implies, If and only if
+## 0.3 Implies, If and only if
 
 ### Implies (`=>`)
 
+Semantics: A implies B is false only in the case A is true and B is false. In all other cases it is true.  
+Equivalences: `A => B`  ≡  `!A | B`  ≡  `!(A & !B)`
+
 | A | B | A => B |
 |---|---|--------|
-| F | F |        |
-| F | T |        |
-| T | F |        |
-| T | T |        |
+| F | F | T      |
+| F | T | T      |
+| T | F | F      |
+| T | T | T      |
+
+Explanation: When A is false, the statement "if A then B" is vacuously true because the premise did not occur.
 
 ### If and only if (`<=>`)
 
+Semantics: A if and only if B is true exactly when A and B share the same truth value.  
+Equivalences: `A <=> B` ≡ `(A => B) & (B => A)` ≡ `(A & B) | (!A & !B)` ≡ `!(A ^ B)`
+
 | A | B | A <=> B |
 |---|---|---------|
-| F | F |         |
-| F | T |         |
-| T | F |         |
-| T | T |         |
+| F | F | T       |
+| F | T | F       |
+| T | F | F       |
+| T | T | T       |
+
+Explanation: Equivalence asserts mutual implication; both directions must hold, so only mismatched truth values make it false.
 
 # 1. Lexer - Transform text to tokens
 
