@@ -5,26 +5,47 @@ title: "feat: <short summary>"
 body:
   - type: markdown
     attributes:
-      value: |
-        Describe the scenario the expert_system should support and how it helps
-        42 students building knowledge bases faster.
+      value: >
+        Describe the scenario, why it matters for expert_system at 42, and which
+        part (parser, inference, CLI, tooling, docs) you want to extend.
   - type: input
     id: scenario
     attributes:
-      label: Scenario / pain point
-      placeholder: Need a way to see which rules fired for a query
+      label: Summary
+      placeholder: Add parser flag to trace tokenization
     validations:
       required: true
   - type: textarea
-    id: proposal
+    id: problem
+    attributes:
+      label: Problem or need
+      description: What pain point, subject requirement, or KB limitation drives this?
+      placeholder: We cannot inspect how parentheses change precedence.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
     attributes:
       label: Proposed solution
-      placeholder: Describe CLI flags, data structures, or UI copy you'd like.
-      render: markdown
-  - type: checkboxes
-    id: checklist
+      description: Outline the idea at a high level (files, data flow, UX).
+      placeholder: >
+        Add --trace-parser to print tokens, AST nodes, and link to inference logs.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
     attributes:
-      label: Ready to help?
+      label: Main area
+      description: Pick the primary part affected.
+      multiple: true
       options:
-        - label: I can work on this change
-        - label: It won't break existing knowledge base files
+        - Parser / lexer
+        - Inference engine
+        - CLI / UX
+        - Tooling / tests
+        - Documentation
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Acceptance criteria, sample KB, links, or dependencies.
