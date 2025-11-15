@@ -37,15 +37,15 @@ See CONTRIBUTING.md for our branching, commit, and PR conventions.
 Before implementing the expert system, we define the behaviour of each logical operator using truth tables.
 
 We use:
-- `T` = true  
-- `F` = false  
+- `T` = true
+- `F` = false
 
 We also write formulas with:
-- `!A`  → NOT A  
-- `A + B` → A AND B  
-- `A | B` → A OR B  
-- `A ^ B` → A XOR B  
-- `A => B` → A implies B  
+- `!A`  → NOT A
+- `A + B` → A AND B
+- `A | B` → A OR B
+- `A ^ B` → A XOR B
+- `A => B` → A implies B
 - `A <=> B` → A if and only if B (logical equivalence)
 
 ## 0.1 Unary operator
@@ -90,7 +90,7 @@ We also write formulas with:
 
 ### Implies (`=>`)
 
-Semantics: A implies B is false only in the case A is true and B is false. In all other cases it is true.  
+Semantics: A implies B is false only in the case A is true and B is false. In all other cases it is true.
 Equivalences: `A => B`  ≡  `!A | B`  ≡  `!(A & !B)`
 
 | A | B | A => B |
@@ -104,7 +104,7 @@ Explanation: When A is false, the statement "if A then B" is vacuously true beca
 
 ### If and only if (`<=>`)
 
-Semantics: A if and only if B is true exactly when A and B share the same truth value.  
+Semantics: A if and only if B is true exactly when A and B share the same truth value.
 Equivalences: `A <=> B` ≡ `(A => B) & (B => A)` ≡ `(A & B) | (!A & !B)` ≡ `!(A ^ B)`
 
 | A | B | A <=> B |
@@ -164,7 +164,7 @@ The lexer produces a stream/list of tokens that will be easier for the parser to
 
 The parser will read the list of tokens to produce:
 - A list of **rules**
-- A set of **initial facts** 
+- A set of **initial facts**
 - A list of **queries**
 
 ## 2.1 Data structures
@@ -286,7 +286,7 @@ facts: Set<char>           // initial known true
 queries: List<char>        // symbols to answer
 ```
 
-Fill `rules_by_conclusion` like: 
+Fill `rules_by_conclusion` like:
 
 ```c
 for rule in rules:
