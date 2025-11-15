@@ -1,0 +1,19 @@
+name: "📝 Docs update"
+description: Improve README, algorithms, or contributor docs.
+labels: [documentation]
+title: "docs: <short summary>"
+body:
+  - type: input
+    id: section
+    attributes:
+      label: Page / section
+      placeholder: README – backward chaining overview
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: What should change?
+      placeholder: Outline the new explanation, diagram, or example you expect.
+    validations:
+      required: true

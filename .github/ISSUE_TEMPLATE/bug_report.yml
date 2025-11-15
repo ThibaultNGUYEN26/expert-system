@@ -1,45 +1,31 @@
----
-name: "Bug report"
-description: "Report broken deductions or crashes"
-title: "[BUG] <short summary>"
-labels:
-  - bug
+name: "🐞 Expert System Bug"
+description: Report issues with inference, parsing, or CLI behavior.
+labels: [bug]
+title: "fix: <short summary>"
 body:
   - type: input
     id: summary
     attributes:
-      label: Summary
-      description: One-line description of the problem.
-      placeholder: Wrong result when rule T is chained with U
+      label: What broke?
+      placeholder: e.g., Querying C never resolves when rule A + B => C is true
     validations:
       required: true
   - type: textarea
-    id: steps
+    id: kb
     attributes:
-      label: Steps to reproduce
-      description: Commands or inputs that trigger the bug.
+      label: Minimal knowledge base
+      description: Facts, initial state, and rules that trigger the bug.
       placeholder: |
-        1. python main.py rules/AND_rules/test4.rule
-        2. Query: =AB
-      render: bash
+        =AB
+        A + B => C
+        ?C
+      render: text
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
       label: Expected result
-      placeholder: Engine should answer "A is true"
+      placeholder: Describe the inference or output you expected.
     validations:
       required: true
-  - type: textarea
-    id: actual
-    attributes:
-      label: Actual result / logs
-      description: Paste the output or describe what you observed.
-    validations:
-      required: true
-  - type: textarea
-    id: extra
-    attributes:
-      label: Extra info
-      description: Mention environment, related files, or quick ideas for a fix.

@@ -1,23 +1,26 @@
----
-name: "Feature request"
-description: "Suggest new behavior or polish"
-title: "[FEAT] <short summary>"
-labels:
-  - feature
+name: "✨ Expert System idea"
+description: Suggest enhancements to inference, CLI UX, or tooling.
+labels: [enhancement]
+title: "feat: <short summary>"
 body:
+  - type: markdown
+    attributes:
+      value: >
+        Describe the scenario, why it matters for expert_system at 42, and which
+        part (parser, inference, CLI, tooling, docs) you want to extend.
   - type: input
-    id: summary
+    id: scenario
     attributes:
       label: Summary
-      placeholder: Add CLI flag to show reasoning tree
+      placeholder: Add parser flag to trace tokenization
     validations:
       required: true
   - type: textarea
     id: problem
     attributes:
       label: Problem or need
-      description: What pain point or subject requirement drives this?
-      placeholder: Evaluators ask how we deduce each answer.
+      description: What pain point, subject requirement, or KB limitation drives this?
+      placeholder: We cannot inspect how parentheses change precedence.
     validations:
       required: true
   - type: textarea
@@ -25,11 +28,24 @@ body:
     attributes:
       label: Proposed solution
       description: Outline the idea at a high level (files, data flow, UX).
-      placeholder: Print visited rules whenever --explain is passed.
+      placeholder: >
+        Add --trace-parser to print tokens, AST nodes, and link to inference logs.
     validations:
       required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Main area
+      description: Pick the primary part affected.
+      multiple: true
+      options:
+        - Parser / lexer
+        - Inference engine
+        - CLI / UX
+        - Tooling / tests
+        - Documentation
   - type: textarea
     id: notes
     attributes:
       label: Notes
-      description: Sketch acceptance criteria, links, or dependencies.
+      description: Acceptance criteria, sample KB, links, or dependencies.
