@@ -1,6 +1,6 @@
 {
   "name": "expert-system",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "An implementation of an expert system that parses a knowledge base and applies inference rules using forward and backward chaining. The project is under active development — expect things to change.",
   "main": "index.js",
   "scripts": {
