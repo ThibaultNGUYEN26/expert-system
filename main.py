@@ -5,6 +5,7 @@ import os
 from utils.conditions import Conditions
 from utils.handle_logging import ColoredFormatter
 from logging import StreamHandler
+from version import __version__
 
 
 logging.root.handlers.clear()
@@ -236,6 +237,7 @@ def build_conditions(sections):
 
 
 if __name__ == "__main__":
+    print(f"Expert System {__version__}")
     parser = argparse.ArgumentParser(description="Run the expert system.")
     parser.add_argument("config", type=str, help="Path to the configuration file")
     args = parser.parse_args()
