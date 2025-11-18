@@ -1,27 +1,27 @@
-from .lexer import (
-    ConfigSections,
-    normalize_expression,
-    parse_config_sections,
-    tokenize_expression,
-)
-from .parser import (
-    build_conditions,
-    build_context,
-    build_fact_condition,
-    build_query_condition,
-    build_rule_condition,
-    parse_expression,
+from .lexer import Lexer, LexerError, Token, TokenType, lex
+from .parser import Parser, ParserError, Program, Rule, parse_program
+from .validator import (
+    ValidationError,
+    ensure_known_operator,
+    ensure_valid_fact_sequence,
+    ensure_valid_symbol,
+    validate_balanced_parentheses,
 )
 
 __all__ = [
-    "ConfigSections",
-    "normalize_expression",
-    "parse_config_sections",
-    "tokenize_expression",
-    "build_conditions",
-    "build_context",
-    "build_fact_condition",
-    "build_query_condition",
-    "build_rule_condition",
-    "parse_expression",
+    "Lexer",
+    "LexerError",
+    "Parser",
+    "ParserError",
+    "Program",
+    "Rule",
+    "Token",
+    "TokenType",
+    "ValidationError",
+    "ensure_known_operator",
+    "ensure_valid_fact_sequence",
+    "ensure_valid_symbol",
+    "lex",
+    "parse_program",
+    "validate_balanced_parentheses",
 ]
