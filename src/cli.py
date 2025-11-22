@@ -7,9 +7,32 @@ from typing import List, Optional
 
 from version import __version__
 
-from src.parsing import build_conditions, build_context, parse_config_sections
-from src.utils import handle_logging  # noqa: F401 - configure logging on import
+from src.parsing import LexerError, ParserError, ValidationError, parse_program
 from src.utils.conditions import Conditions
+from src.utils.program_logging import log_program
+
+
+class _ColorFormatter(logging.Formatter):
+    COLORS = {
+        "DEBUG": "\033[94m",  # Blue
+        "INFO": "\033[92m",  # Green
+        "WARNING": "\033[93m",  # Yellow
+        "ERROR": "\033[91m",  # Red
+        "CRITICAL": "\033[95m",  # Magenta
+    }
+    RESET = "\033[0m"
+
+    def format(self, record: logging.LogRecord) -> str:
+        if not record.getMessage():
+            return ""
+        color = self.COLORS.get(record.levelname, self.RESET)
+        base = super().format(record)
+        return f"{color}{base}{self.RESET}"
+
+
+_handler = logging.StreamHandler()
+_handler.setFormatter(_ColorFormatter("[%(levelname)s] %(message)s"))
+logging.basicConfig(level=logging.INFO, handlers=[_handler])
 
 
 def _run(argv: Optional[List[str]] = None) -> int:
@@ -26,30 +49,48 @@ def _run(argv: Optional[List[str]] = None) -> int:
     logging.info("Using configuration file: %s", config_path)
 
     config_data = config_path.read_text(encoding="utf-8")
-    sections = parse_config_sections(config_data)
-    print(f'Sections: {sections}')
-    context = build_context(sections["facts"])
-    logging.debug("Initial context: %s", context)
+    try:
+        program = parse_program(config_data)
+    except (LexerError, ParserError, ValidationError) as error:
+        logging.error("Failed to parse '%s': %s", config_path, error)
+        return 1
 
-    conditions = build_conditions(sections)
-    if not conditions:
-        logging.warning("No conditions found to evaluate.")
-        return 0
+    log_program(program)
+    _log_evaluation_results()
+    return 0
 
+
+def _log_evaluation_results() -> None:
+    logging.info("")
+    header_color = "\033[95m"
+    label_color = "\033[96m"
+    true_color = "\033[92m"
+    false_color = "\033[91m"
+    reset = "\033[0m"
+
+    logging.info("%sEvaluation summary%s", header_color, reset)
+
+    def _colorize(value: bool) -> str:
+        return f"{true_color}{value}{reset}" if value else f"{false_color}{value}{reset}"
+
+    def _log(label: str, value: bool) -> None:
+        logging.info("%s%s%s: %s", label_color, label, reset, _colorize(value))
+
+    # Demonstrate logical operations for logging purposes, not actual program evaluation
     and_condition = Conditions.and_operation(True, False)
-    logging.info("AND condition evaluation result: %s", and_condition)
+    _log("AND result", and_condition)
 
     or_condition = Conditions.or_operation(True, False)
-    logging.info("OR condition evaluation result: %s", or_condition)
+    _log("OR result", or_condition)
 
     xor_condition = Conditions.xor_operation(True, False)
-    logging.info("XOR condition evaluation result: %s", xor_condition)
+    _log("XOR result", xor_condition)
 
     not_condition = Conditions.not_operation(True)
-    logging.info("NOT condition evaluation result: %s", not_condition)
+    _log("NOT result", not_condition)
 
-    logging.info("Processed %d condition(s).", len(conditions))
-    return 0
+    logging.info("")
+    logging.info("Program ready for evaluation.")
 
 
 def run_cli(argv: Optional[List[str]] = None) -> int:
