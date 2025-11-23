@@ -11,7 +11,15 @@ from .validator import ensure_known_operator, ensure_valid_symbol, validate_bala
 
 @dataclass(slots=True)
 class Rule:
-    """Represents a single inference rule."""
+    """
+    Represents a single inference rule.
+
+    Fields:
+        condition (Condition): The logical condition (premises) that must be satisfied for the rule to apply.
+        conclusion (FactCondition): The fact or set of facts that are inferred if the condition is met.
+            Unlike 'condition', 'conclusion' is always a FactCondition, representing concrete facts.
+        line (int): The line number in the source file where this rule was defined. Useful for error reporting.
+    """
 
     condition: Condition
     conclusion: FactCondition
@@ -20,7 +28,14 @@ class Rule:
 
 @dataclass(slots=True)
 class Program:
-    """Container holding every parsed structure."""
+    """
+    Container holding every parsed structure.
+
+    Attributes:
+        rules: List of Rule objects representing inference rules.
+        facts: Dictionary mapping symbols (str) to boolean values, representing known facts.
+        queries: List of symbols (str) to evaluate.
+    """
 
     rules: List[Rule] = field(default_factory=list)
     facts: Dict[str, bool] = field(default_factory=dict)
@@ -83,9 +98,9 @@ class Parser:
             rules.extend(self._parse_rule())
 
         if not facts_started:
-            raise ParserError("Missing facts line starting with '='.")
+            raise ParserError("No facts declaration found. A facts line starting with '=' is required after all rules.")
         if not queries_started:
-            raise ParserError("Missing queries line starting with '?'.")
+            raise ParserError("No queries found. A queries line starting with '?' is required after the facts declaration.")
 
         return Program(rules=rules, facts=facts, queries=queries)
 
@@ -99,6 +114,8 @@ class Parser:
             line_facts[symbol] = True
 
         self._consume_line_breaks()
+        if not line_facts:
+            raise self._error("Facts line must contain at least one fact symbol.")
         return line_facts
 
     def _parse_negative_fact_line(self) -> Dict[str, bool]:
@@ -130,9 +147,20 @@ class Parser:
             result.append(symbol)
 
         self._consume_line_breaks()
+        if not result:
+            raise ParserError("Query line must contain at least one query symbol.")
         return result
 
     def _parse_rule(self) -> List[Rule]:
+        """
+        Parses a rule line, handling both unidirectional ('=>') and bidirectional ('<=>') operators.
+
+        Returns a list of Rule objects. For unidirectional rules ('=>'), the list contains a single Rule.
+        For bidirectional rules ('<=>'), the list contains two Rules representing both directions.
+
+        Raises:
+            ParserError: If the rule syntax is invalid or required tokens are missing.
+        """
         left_expression = self._parse_expression()
 
         if self._match(TokenType.IMPLIES):
@@ -163,6 +191,11 @@ class Parser:
         raise self._error("Expected '=>' or '<=>' after the rule condition.")
 
     def _parse_expression(self) -> Condition:
+        """
+        Parses a boolean expression consisting of fact symbols, parentheses, and logical operators
+        (AND, OR, XOR, NOT). Expressions may be nested using parentheses and combined using
+        the supported operators. Returns a Condition object representing the parsed expression.
+        """
         return self._parse_or()
 
     def _parse_or(self) -> Condition:
