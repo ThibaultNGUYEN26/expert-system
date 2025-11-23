@@ -6,7 +6,7 @@ from typing import List
 
 
 class TokenType(Enum):
-    """Types of lexemes recognised by the expert-system language."""
+    """Types of lexemes recognized by the expert-system language."""
 
     IDENT = auto()
     AND = auto()
@@ -92,10 +92,12 @@ class Lexer:
                 continue
 
             if char == "<":
-                if self._match("=") and self._match(">"):
-                    tokens.append(self._make_token(TokenType.IIF, "<=>"))
-                    continue
-                raise self._error("Unexpected '<' without matching '=>' sequence.")
+                if self._match("="):
+                    if self._match(">"):
+                        tokens.append(self._make_token(TokenType.IIF, "<=>"))
+                        continue
+                    raise self._error("Expected '>' to complete '<=>' operator.")
+                raise self._error("Unexpected '<' character.")
 
             if char == "=":
                 if self._match(">"):
@@ -159,7 +161,7 @@ class Lexer:
 
 
 def lex(source: str) -> List[Token]:
-    """Convenience function to tokenise the provided source."""
+    """Convenience function to tokenize the provided source."""
     return Lexer(source).tokenize()
 
 

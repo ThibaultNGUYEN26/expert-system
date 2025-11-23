@@ -41,7 +41,7 @@ def _log_rules(program: Program) -> None:
         label = str(rule.condition)
         logging.info(
             _color(
-                f"    [{str(index).zfill(width)}] line {rule.line} -> {label} => {rule.conclusion.symbol}",
+                f"    [{index:0{width}d}] line {rule.line} -> {label} => {rule.conclusion.symbol}",
                 WHITE,
             )
         )
