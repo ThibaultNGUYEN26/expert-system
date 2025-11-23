@@ -107,8 +107,6 @@ class Lexer:
                 continue
 
             if char.isalpha():
-                if len(char) > 1:
-                    raise self._error(f"Unsupported identifier '{char}'.")
                 tokens.append(self._make_token(TokenType.IDENT, char))
                 continue
 
