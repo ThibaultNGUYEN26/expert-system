@@ -23,7 +23,7 @@ class ValidationError(ValueError):
 
 
 def ensure_valid_symbol(symbol: str, token: Token | None = None) -> str:
-    """Validate and normalise a fact symbol."""
+    """Validate and normalize a fact symbol."""
     cleaned = symbol.strip()
     if len(cleaned) != 1 or cleaned.upper() not in VALID_FACT_SYMBOLS:
         location = f" at line {token.line}, column {token.column}" if token else ""
@@ -41,18 +41,22 @@ def ensure_valid_symbol(symbol: str, token: Token | None = None) -> str:
 def validate_balanced_parentheses(tokens: Sequence[Token]) -> None:
     """Ensure that parentheses are balanced across the token stream."""
     depth = 0
+    lparen_stack = []
     for token in tokens:
         if token.type == TokenType.L_PAREN:
-            depth += 1
+            lparen_stack.append(token)
         elif token.type == TokenType.R_PAREN:
-            if depth == 0:
+            if not lparen_stack:
                 raise ValidationError(
                     f"Unmatched ')' at line {token.line}, column {token.column}."
                 )
-            depth -= 1
+            lparen_stack.pop()
 
-    if depth != 0:
-        raise ValidationError("Unmatched '(' detected in the input.")
+    if lparen_stack:
+        first_unmatched = lparen_stack[0]
+        raise ValidationError(
+            f"Unmatched '(' at line {first_unmatched.line}, column {first_unmatched.column}."
+        )
 
 
 def ensure_known_operator(token: Token) -> None:
