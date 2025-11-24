@@ -1,0 +1,9 @@
+# MIXED - OR + AND with parentheses
+# A | (B + C) - explicitly grouped
+
+A | (B + C) => D
+
+=A
+!B
+!C
+?D

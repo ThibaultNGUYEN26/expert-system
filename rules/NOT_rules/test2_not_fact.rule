@@ -1,0 +1,7 @@
+# NOT operator - Negating a true fact
+# !A is FALSE when A is TRUE
+
+!A => B
+
+=A
+?B

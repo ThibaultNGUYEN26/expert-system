@@ -1,0 +1,9 @@
+# NOT operator - NOT on each operand
+# !A + !B is TRUE when both A and B are FALSE
+
+!A + !B => C
+
+=Z
+!A
+!B
+?C

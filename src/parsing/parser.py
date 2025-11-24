@@ -25,13 +25,13 @@ class Rule:
 
     Fields:
         condition (Condition): The logical condition (premises) that must be satisfied for the rule to apply.
-        conclusion (FactCondition): The fact or set of facts that are inferred if the condition is met.
-            Unlike 'condition', 'conclusion' is always a FactCondition, representing concrete facts.
+        conclusion (Condition): The fact or set of facts that are inferred if the condition is met.
+            Can be a FactCondition (single fact) or OrCondition/XorCondition for ambiguous conclusions.
         line (int): The line number in the source file where this rule was defined. Useful for error reporting.
     """
 
     condition: Condition
-    conclusion: FactCondition
+    conclusion: Condition
     line: int
 
 
@@ -174,11 +174,9 @@ class Parser:
 
         if self._match(TokenType.IMPLIES):
             operator = self._previous()
-            conclusion_token = self._consume(TokenType.IDENT, "Expected conclusion symbol after '=>'.")
-            symbol = ensure_valid_symbol(conclusion_token.lexeme, conclusion_token)
-            conclusion = FactCondition(symbol)
+            conclusion_expr = self._parse_expression()
             self._consume_line_breaks()
-            return [Rule(condition=left_expression, conclusion=conclusion, line=operator.line)]
+            return [Rule(condition=left_expression, conclusion=conclusion_expr, line=operator.line)]
 
         if self._match(TokenType.IIF):
             operator = self._previous()

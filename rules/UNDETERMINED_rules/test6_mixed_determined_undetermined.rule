@@ -1,0 +1,10 @@
+# UNDETERMINED - Mixed with determined facts
+# Some facts are determined, others undetermined
+
+A => B | C
+B => D
+
+=A
+?B
+?C
+?D

@@ -1,13 +1,14 @@
 # SIMPLE AND OPERATOR
 
 # Rules
-A + B => C  # A and B implies C
+A + (B ^ C) => D  # A and B implies C
 
 # Facts
 =AB         # A is True, B is True
+!C
 
 # Queries
-?C          # What is the value of C?
+?D          # What is the value of C?
 
 # Result
 # Query: C

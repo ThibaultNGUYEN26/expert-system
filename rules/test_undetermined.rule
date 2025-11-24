@@ -1,0 +1,10 @@
+# Test UNDETERMINED state
+# The spec says: "A is true, and if A then B or C, then B and C are undetermined"
+# This means: if the rule says A implies (B OR C), we know at least one is true
+# but we don't know which specific one - so both B and C are UNDETERMINED
+
+A => B | C
+
+=A
+?B
+?C

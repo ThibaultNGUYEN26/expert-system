@@ -1,0 +1,9 @@
+# AND in conclusion - with multiple facts
+# A => B + C + D makes all three true
+
+A => B + C + D
+
+=A
+?B
+?C
+?D

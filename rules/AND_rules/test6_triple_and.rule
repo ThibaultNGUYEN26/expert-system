@@ -1,0 +1,9 @@
+# AND operator - Multiple facts in condition
+# (A + B) + C - all must be true
+
+(A + B) + C => D
+
+=A
+=B
+=C
+?D

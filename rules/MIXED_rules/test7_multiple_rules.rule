@@ -1,0 +1,14 @@
+# MIXED - Multiple rules with different operators
+# Testing interactions between rules
+
+A + B => C
+C | D => E
+!E ^ F => G
+
+=A
+=B
+=D
+=F
+?C
+?E
+?G

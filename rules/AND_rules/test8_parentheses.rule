@@ -1,0 +1,9 @@
+# AND operator - With parentheses changing evaluation
+# A + (B + C)
+
+A + (B + C) => D
+
+=A
+=B
+=C
+?D

@@ -1,0 +1,7 @@
+# NOT operator - Double negation
+# !!A is TRUE when A is TRUE
+
+!!A => B
+
+=A
+?B

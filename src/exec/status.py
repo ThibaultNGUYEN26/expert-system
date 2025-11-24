@@ -5,4 +5,4 @@ class Status(Enum):
     IN_PROGRESS = auto()
     TRUE = auto()
     FALSE = auto()
-    
+    UNDETERMINED = auto()

@@ -1,0 +1,8 @@
+# AND in conclusion - both facts become true
+# A => B + C makes both B and C true
+
+A => B + C
+
+=A
+?B
+?C

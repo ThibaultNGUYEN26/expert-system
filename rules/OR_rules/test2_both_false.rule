@@ -1,0 +1,9 @@
+# OR operator - Both false
+# A | B is FALSE when both are FALSE
+
+A | B => C
+
+=Z
+!A
+!B
+?C

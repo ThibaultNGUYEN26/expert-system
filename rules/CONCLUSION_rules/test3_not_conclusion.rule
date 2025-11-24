@@ -1,0 +1,7 @@
+# NOT in conclusion - fact becomes false
+# A => !B makes B false
+
+A => !B
+
+=A
+?B

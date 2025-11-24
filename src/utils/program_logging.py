@@ -39,9 +39,11 @@ def _log_rules(program: Program) -> None:
     width = len(str(len(rules)))
     for index, rule in enumerate(rules, 1):
         label = str(rule.condition)
+        # Conclusion can now be any Condition, not just FactCondition
+        conclusion_str = getattr(rule.conclusion, 'rule_format', None) or str(rule.conclusion)
         logging.info(
             _color(
-                f"    [{index:0{width}d}] line {rule.line} -> {label} => {rule.conclusion.symbol}",
+                f"    [{index:0{width}d}] line {rule.line} -> {label} => {conclusion_str}",
                 WHITE,
             )
         )

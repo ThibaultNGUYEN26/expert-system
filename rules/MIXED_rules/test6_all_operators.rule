@@ -1,0 +1,8 @@
+# MIXED - All operators combined
+# !A + (B | C) ^ (D + !E)
+
+!A + (B | C) ^ (D + !E) => F
+
+=BD
+!ACE
+?F

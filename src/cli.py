@@ -10,6 +10,9 @@ from version import __version__
 from src.parsing import LexerError, ParserError, ValidationError, parse_program
 from src.utils.conditions import Conditions
 from src.utils.program_logging import log_program
+from src.exec import solve
+from src.exec.exec_context import ExecContext
+from src.exec.status import Status
 
 
 class _ColorFormatter(logging.Formatter):
@@ -56,6 +59,43 @@ def _run(argv: Optional[List[str]] = None) -> int:
         return 1
 
     log_program(program)
+
+    # Build execution context and run the program
+    try:
+        ctx = ExecContext.from_program(program)
+    except Exception as error:
+        logging.error("Failed to build execution context: %s", error)
+        return 1
+
+    try:
+        results = solve.run_queries(ctx)
+    except Exception as error:
+        logging.error("Execution error: %s", error)
+        return 1
+
+    # Log actual evaluation results from exec
+    logging.info("")
+    header_color = "\033[95m"
+    reset = "\033[0m"
+    logging.info("%sExecution results%s", header_color, reset)
+
+    true_color = "\033[92m"
+    false_color = "\033[91m"
+    undetermined_color = "\033[93m"  # Yellow for undetermined
+
+    def _colorize(status: Status) -> str:
+        if status is Status.TRUE:
+            return f"{true_color}TRUE{reset}"
+        elif status is Status.FALSE:
+            return f"{false_color}FALSE{reset}"
+        elif status is Status.UNDETERMINED:
+            return f"{undetermined_color}UNDETERMINED{reset}"
+        else:
+            return f"{status.name}"
+
+    for label, status in results.items():
+        logging.info("%s: %s", label, _colorize(status))
+
     _log_evaluation_results()
     return 0
 

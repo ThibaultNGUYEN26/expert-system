@@ -1,0 +1,8 @@
+# XOR operator - Simple XOR with both true
+# A ^ B is FALSE when both are TRUE
+
+A ^ B => C
+
+=A
+=B
+?C

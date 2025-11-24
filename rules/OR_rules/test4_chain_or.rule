@@ -1,0 +1,9 @@
+# OR operator - Chain of OR
+# A | B | C - at least one must be true
+
+A | B | C => D
+
+=C
+!A
+!B
+?D

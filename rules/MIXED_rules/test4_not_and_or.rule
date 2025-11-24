@@ -1,0 +1,9 @@
+# MIXED - NOT + AND + OR
+# !(A + B) | C
+
+!(A + B) | C => D
+
+=A
+!B
+!C
+?D

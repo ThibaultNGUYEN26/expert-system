@@ -1,0 +1,9 @@
+# Test UNDETERMINED with XOR in conclusion
+# A ^ B means exactly one of A or B must be true
+# But we don't know which one
+
+D => A ^ B
+
+=D
+?A
+?B

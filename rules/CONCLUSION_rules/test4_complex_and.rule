@@ -1,0 +1,9 @@
+# Complex AND in conclusion
+# A => (B + C) + D makes all true
+
+A => (B + C) + D
+
+=A
+?B
+?C
+?D
