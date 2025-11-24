@@ -81,10 +81,6 @@ class Parser:
                 facts.update(self._parse_fact_line())
                 continue
 
-            if facts_started and self._check(TokenType.NOT):
-                facts.update(self._parse_negative_fact_line())
-                continue
-
             if self._check(TokenType.QUERY):
                 queries_started = True
                 queries.extend(self._parse_query_line())
@@ -116,25 +112,6 @@ class Parser:
         self._consume_line_breaks()
         if not line_facts:
             raise self._error("Facts line must contain at least one fact symbol.")
-        return line_facts
-
-    def _parse_negative_fact_line(self) -> Dict[str, bool]:
-        self._consume(TokenType.NOT, "Expected '!' when declaring negative facts.")
-        line_facts: Dict[str, bool] = {}
-
-        if self._check(TokenType.IDENT):
-            token = self._advance()
-            symbol = ensure_valid_symbol(token.lexeme, token)
-            line_facts[symbol] = False
-        else:
-            raise self._error("Expected a fact symbol after '!'.")
-
-        while not self._check(TokenType.EOL) and not self._check(TokenType.EOF):
-            token = self._consume(TokenType.IDENT, "Expected a fact symbol.")
-            symbol = ensure_valid_symbol(token.lexeme, token)
-            line_facts[symbol] = False
-
-        self._consume_line_breaks()
         return line_facts
 
     def _parse_query_line(self) -> List[str]:
