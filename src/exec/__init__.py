@@ -48,7 +48,9 @@ class BinaryCondition(Condition):
     def __post_init__(self) -> None:
         left_label = getattr(self.left, "rule_format", str(self.left))
         right_label = getattr(self.right, "rule_format", str(self.right))
-        self.rule_format = f"({left_label} {self.operator} {right_label})"
+        operator_symbol = getattr(type(self), "operator", self.operator)
+        self.operator = operator_symbol
+        self.rule_format = f"({left_label} {operator_symbol} {right_label})"
 
 
 class AndCondition(BinaryCondition):
