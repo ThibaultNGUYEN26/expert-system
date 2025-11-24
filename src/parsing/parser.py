@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional, Sequence
 
-from src.core import (
+from src.exec import (
     AndCondition,
     Condition,
     FactCondition,
