@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .exec_context import ExecContext
 
 
-def eval_condition(ctx: "ExecContext", cond: Condition) -> Status:
+def eval_condition(ctx: "ExecContext", cond: Condition, depth: int = 0) -> Status:
     """
     Evaluate a Condition tree to a Status value using three-valued logic.
 
@@ -30,17 +30,22 @@ def eval_condition(ctx: "ExecContext", cond: Condition) -> Status:
     - AND: TRUE if both TRUE, FALSE if any FALSE, else UNDETERMINED
     - OR: TRUE if any TRUE, FALSE if both FALSE, else UNDETERMINED
     - XOR: TRUE if exactly one TRUE, FALSE if both same, else UNDETERMINED
+
+    Args:
+        ctx: Execution context
+        cond: Condition to evaluate
+        depth: Recursion depth for indentation
     """
     # Local import to avoid circular dependency: solve_symbol() also uses eval_condition()
     from .solve import solve_symbol
 
     # SYMBOL / atomic fact: delegate to the solver
     if isinstance(cond, FactCondition):
-        return solve_symbol(ctx, cond.symbol)
+        return solve_symbol(ctx, cond.symbol, depth)
 
     # NOT
     if isinstance(cond, NotCondition):
-        status = eval_condition(ctx, cond.condition)
+        status = eval_condition(ctx, cond.condition, depth)
         if status is Status.TRUE:
             return Status.FALSE
         elif status is Status.FALSE:
@@ -50,8 +55,8 @@ def eval_condition(ctx: "ExecContext", cond: Condition) -> Status:
 
     # AND
     if isinstance(cond, AndCondition):
-        left = eval_condition(ctx, cond.left)
-        right = eval_condition(ctx, cond.right)
+        left = eval_condition(ctx, cond.left, depth)
+        right = eval_condition(ctx, cond.right, depth)
 
         # FALSE if either is FALSE
         if left is Status.FALSE or right is Status.FALSE:
@@ -65,8 +70,8 @@ def eval_condition(ctx: "ExecContext", cond: Condition) -> Status:
 
     # OR
     if isinstance(cond, OrCondition):
-        left = eval_condition(ctx, cond.left)
-        right = eval_condition(ctx, cond.right)
+        left = eval_condition(ctx, cond.left, depth)
+        right = eval_condition(ctx, cond.right, depth)
 
         # TRUE if either is TRUE
         if left is Status.TRUE or right is Status.TRUE:
@@ -80,8 +85,8 @@ def eval_condition(ctx: "ExecContext", cond: Condition) -> Status:
 
     # XOR
     if isinstance(cond, XorCondition):
-        left = eval_condition(ctx, cond.left)
-        right = eval_condition(ctx, cond.right)
+        left = eval_condition(ctx, cond.left, depth)
+        right = eval_condition(ctx, cond.right, depth)
 
         # If either is UNDETERMINED, result is UNDETERMINED
         if left is Status.UNDETERMINED or right is Status.UNDETERMINED:

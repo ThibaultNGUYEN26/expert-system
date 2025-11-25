@@ -41,6 +41,7 @@ logging.basicConfig(level=logging.INFO, handlers=[_handler])
 def _run(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Run the expert system.")
     parser.add_argument("config", type=str, help="Path to the configuration file")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose reasoning output")
     args = parser.parse_args(argv)
 
     config_path = Path(args.config)
@@ -62,7 +63,7 @@ def _run(argv: Optional[List[str]] = None) -> int:
 
     # Build execution context and run the program
     try:
-        ctx = ExecContext.from_program(program)
+        ctx = ExecContext.from_program(program, verbose=args.verbose)
     except Exception as error:
         logging.error("Failed to build execution context: %s", error)
         return 1
@@ -72,6 +73,15 @@ def _run(argv: Optional[List[str]] = None) -> int:
     except Exception as error:
         logging.error("Execution error: %s", error)
         return 1
+
+    # Log verbose reasoning if enabled
+    if args.verbose and hasattr(ctx, 'reasoning_log') and ctx.reasoning_log:
+        print("")
+        header_color = "\033[95m"
+        reset = "\033[0m"
+        print(f"{header_color}Reasoning Process{reset}")
+        for line in ctx.reasoning_log:
+            print(line)
 
     # Log actual evaluation results from exec
     logging.info("")
@@ -96,11 +106,14 @@ def _run(argv: Optional[List[str]] = None) -> int:
     for label, status in results.items():
         logging.info("%s: %s", label, _colorize(status))
 
-    _log_evaluation_results()
+    _log_evaluation_results(program)
     return 0
 
 
-def _log_evaluation_results() -> None:
+def _log_evaluation_results(program) -> None:
+    """Display which operators are used in the rule file."""
+    import src.exec as exec_module
+
     logging.info("")
     header_color = "\033[95m"
     label_color = "\033[96m"
@@ -108,7 +121,7 @@ def _log_evaluation_results() -> None:
     false_color = "\033[91m"
     reset = "\033[0m"
 
-    logging.info("%sEvaluation summary%s", header_color, reset)
+    logging.info("%sOperators used in rules%s", header_color, reset)
 
     def _colorize(value: bool) -> str:
         return f"{true_color}{value}{reset}" if value else f"{false_color}{value}{reset}"
@@ -116,21 +129,47 @@ def _log_evaluation_results() -> None:
     def _log(label: str, value: bool) -> None:
         logging.info("%s%s%s: %s", label_color, label, reset, _colorize(value))
 
-    # Demonstrate logical operations for logging purposes, not actual program evaluation
-    and_condition = Conditions.and_operation(True, False)
-    _log("AND result", and_condition)
+    # Check if operators are actually used in the rules
+    def has_operator_in_condition(cond, operator_type) -> bool:
+        """Recursively check if a condition contains a specific operator."""
+        if isinstance(cond, operator_type):
+            return True
+        if isinstance(cond, (exec_module.AndCondition, exec_module.OrCondition, exec_module.XorCondition)):
+            return has_operator_in_condition(cond.left, operator_type) or has_operator_in_condition(cond.right, operator_type)
+        if isinstance(cond, exec_module.NotCondition):
+            return has_operator_in_condition(cond.condition, operator_type)
+        return False
 
-    or_condition = Conditions.or_operation(True, False)
-    _log("OR result", or_condition)
+    has_and = False
+    has_or = False
+    has_xor = False
+    has_not = False
 
-    xor_condition = Conditions.xor_operation(True, False)
-    _log("XOR result", xor_condition)
+    for rule in program.rules:
+        # Check condition
+        if has_operator_in_condition(rule.condition, exec_module.AndCondition):
+            has_and = True
+        if has_operator_in_condition(rule.condition, exec_module.OrCondition):
+            has_or = True
+        if has_operator_in_condition(rule.condition, exec_module.XorCondition):
+            has_xor = True
+        if has_operator_in_condition(rule.condition, exec_module.NotCondition):
+            has_not = True
 
-    not_condition = Conditions.not_operation(True)
-    _log("NOT result", not_condition)
+        # Check conclusion
+        if has_operator_in_condition(rule.conclusion, exec_module.AndCondition):
+            has_and = True
+        if has_operator_in_condition(rule.conclusion, exec_module.OrCondition):
+            has_or = True
+        if has_operator_in_condition(rule.conclusion, exec_module.XorCondition):
+            has_xor = True
+        if has_operator_in_condition(rule.conclusion, exec_module.NotCondition):
+            has_not = True
 
-    logging.info("")
-    logging.info("Program ready for evaluation.")
+    _log("AND", has_and)
+    _log("OR", has_or)
+    _log("XOR", has_xor)
+    _log("NOT", has_not)
 
 
 def run_cli(argv: Optional[List[str]] = None) -> int:

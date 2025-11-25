@@ -10,7 +10,7 @@ from __init__ import (
 )
 
 from exec_context import ExecContext
-from solve import solve_symbol, run_queries
+from solve import run_queries
 
 
 # ========= BASE EXAMPLE =========
