@@ -3,6 +3,9 @@
 
 !A + (B | C) ^ (D + !E) => F
 
-=BD
-!ACE
+Z => !A
+Z => !C
+Z => !E
+
+=BDZ
 ?F

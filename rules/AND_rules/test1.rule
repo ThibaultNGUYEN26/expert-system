@@ -1,22 +1,19 @@
 # SIMPLE AND OPERATOR
 
 # Rules
-A + (B ^ C) => D  # A and B implies C
+A + B => D
 
 # Facts
-=AB         # A is True, B is True
-!C
+=AB
 
 # Queries
-?D          # What is the value of C?
+?D
 
 # Result
-# Query: C
-# Rule that concludes C: A and B implies C
+# Query: D
+# Rule that concludes D: A and B implies D
 #   Subgoals: A, B
 #       A: Fact says A is True
 #       B: Fact says B is True
-#   Subgoal: A and B
-#       A and B is True + True = True
-#   Since A and B is True then C is True
-# Result C is True
+#   Since A and B is True then D is True
+# Result D is True

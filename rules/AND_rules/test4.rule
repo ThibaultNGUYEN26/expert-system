@@ -4,8 +4,9 @@
 K + L => M  # K and L implies M
 
 # Facts
-=K          # K is True
-!L          # Not L is True (so L is False)
+# Facts
+=KZ          # K is True and INIT Z
+Z => !L      # Move negative fact into rule
 
 # Queries
 ?M          # What is the value of M?

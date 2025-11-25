@@ -10,8 +10,8 @@ X + J => Y      # X and J implies Y
 Y + M => Z      # Y and M implies Z
 
 # Facts
-=ABDEFKH        # A, B, D, E, F, K, H are True
-!L              # Not L is True
+=ABDEFKHZ        # A, B, D, E, F, K, H are True and INIT Z
+Z => !L          # Move negative fact into rule
 
 # Queries
 ?Z              # What is the value of Z?

@@ -12,11 +12,13 @@ F => G ^ H
 # Rule 4: X has no supporting rules, will be FALSE
 X + Y => Z
 
+Z => !Y
+
 # Facts
 =A      # A is explicitly true
 =C      # C is explicitly true
 =F      # F is explicitly true
-!Y      # Y is explicitly false
+=Z      # INIT fact for negative assertions
 
 # Queries
 ?A      # TRUE (fact)

@@ -6,9 +6,11 @@ B + C => D
 D | E => F
 !F ^ G => H
 
+Z => !E
+
 =A
 =C
-!E
+=Z
 =G
 ?B
 ?D
