@@ -116,6 +116,11 @@ def solve_symbol(ctx: "ExecContext", symbol: str, depth: int = 0) -> Status:
             elif isinstance(rule.conclusion, exec_module.FactCondition):
                 # Simple fact conclusion
                 if rule.conclusion.symbol == symbol:
+                    # Check for contradiction with initial facts
+                    if ctx.is_fact_false(symbol):
+                        contradiction_msg = f"CONTRADICTION: Rule '{condition_str} => {conclusion_str}' tries to set {symbol}=TRUE, but {symbol}=FALSE is declared as initial fact"
+                        ctx.add_contradiction(contradiction_msg)
+                        ctx.log_reasoning(f"\033[91m⚠ {contradiction_msg}\033[0m", depth + 1)
                     ctx.log_reasoning(f"\033[92m✓ {symbol} is TRUE (from rule)\033[0m", depth + 1)
                     ctx.set_status(symbol, Status.TRUE)
                     return Status.TRUE
@@ -125,6 +130,15 @@ def solve_symbol(ctx: "ExecContext", symbol: str, depth: int = 0) -> Status:
                 inner_symbols = _extract_fact_symbols(rule.conclusion.condition)
                 if symbol in inner_symbols:
                     # If the conclusion is !A and we're querying A, A should be FALSE
+                    # Check for contradiction with initial facts or previously determined value
+                    if ctx.is_fact_true(symbol):
+                        contradiction_msg = f"CONTRADICTION: Rule '{condition_str} => {conclusion_str}' tries to set {symbol}=FALSE, but {symbol}=TRUE is declared as initial fact"
+                        ctx.add_contradiction(contradiction_msg)
+                        ctx.log_reasoning(f"\033[91m⚠ {contradiction_msg}\033[0m", depth + 1)
+                    elif ctx.get_status(symbol) == Status.TRUE:
+                        contradiction_msg = f"CONTRADICTION: Rule '{condition_str} => {conclusion_str}' tries to set {symbol}=FALSE, but {symbol} was already determined to be TRUE (circular dependency)"
+                        ctx.add_contradiction(contradiction_msg)
+                        ctx.log_reasoning(f"\033[91m⚠ {contradiction_msg}\033[0m", depth + 1)
                     ctx.log_reasoning(f"\033[91m✗ {symbol} is FALSE (negated in conclusion)\033[0m", depth + 1)
                     ctx.set_status(symbol, Status.FALSE)
                     return Status.FALSE
@@ -148,6 +162,9 @@ def run_queries(ctx: "ExecContext") -> Dict[str, Status]:
     """
     Evaluate all queries from the Program and return a dict: label -> Status.
     """
+    # First, validate that no rules contradict the initial facts
+    _validate_no_contradictions(ctx)
+
     results: Dict[str, Status] = {}
     for query in ctx.program.queries:
         # query is a string symbol name, e.g. "A"
@@ -168,3 +185,45 @@ def run_queries(ctx: "ExecContext") -> Dict[str, Status]:
             status_str = res.name
         ctx.log_reasoning(f"\n\033[1mFinal result: {query} is {status_str}\033[0m\n")
     return results
+
+
+def _validate_no_contradictions(ctx: "ExecContext") -> None:
+    """
+    Check if any rules would contradict the initial facts.
+    This is a forward pass to detect contradictions before solving queries.
+    """
+    import src.exec as exec_module
+
+    for rule in ctx.program.rules:
+        # Evaluate the condition to see if this rule would fire
+        condition_status = eval_condition(ctx, rule.condition, depth=0)
+
+        if condition_status is Status.TRUE:
+            # This rule would fire - check if its conclusion contradicts facts
+            condition_str = format_condition(rule.condition)
+            conclusion_str = format_condition(rule.conclusion)
+
+            # Check conclusion for contradictions
+            def check_contradiction(conclusion: "exec_module.Condition") -> None:
+                if isinstance(conclusion, exec_module.FactCondition):
+                    # Rule concludes symbol=TRUE
+                    if ctx.is_fact_false(conclusion.symbol):
+                        msg = f"CONTRADICTION: Rule '{condition_str} => {conclusion_str}' concludes {conclusion.symbol}=TRUE, but {conclusion.symbol}=FALSE is declared as fact"
+                        ctx.add_contradiction(msg)
+                elif isinstance(conclusion, exec_module.NotCondition):
+                    # Rule concludes symbol=FALSE
+                    inner_symbols = _extract_fact_symbols(conclusion.condition)
+                    for sym in inner_symbols:
+                        if ctx.is_fact_true(sym):
+                            msg = f"CONTRADICTION: Rule '{condition_str} => {conclusion_str}' concludes {sym}=FALSE, but {sym}=TRUE is declared as fact"
+                            ctx.add_contradiction(msg)
+                elif isinstance(conclusion, exec_module.AndCondition):
+                    # All symbols in AND conclusion become TRUE
+                    check_contradiction(conclusion.left)
+                    check_contradiction(conclusion.right)
+                elif isinstance(conclusion, (exec_module.OrCondition, exec_module.XorCondition)):
+                    # These create ambiguity, not contradictions with facts
+                    # But we can still check if any branch would contradict
+                    pass
+
+            check_contradiction(rule.conclusion)

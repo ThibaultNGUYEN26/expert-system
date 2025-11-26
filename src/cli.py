@@ -83,6 +83,22 @@ def _run(argv: Optional[List[str]] = None) -> int:
         for line in ctx.reasoning_log:
             print(line)
 
+    # Display contradictions if any were detected
+    if hasattr(ctx, 'contradictions') and ctx.contradictions:
+        print("")
+        error_color = "\033[91m"
+        warning_color = "\033[93m"
+        reset = "\033[0m"
+        print(f"{error_color}{'=' * 60}{reset}")
+        print(f"{error_color}CONTRADICTIONS DETECTED{reset}")
+        print(f"{error_color}{'=' * 60}{reset}")
+        for contradiction in ctx.contradictions:
+            print(f"{warning_color}{contradiction}{reset}")
+        print(f"{error_color}{'=' * 60}{reset}")
+        print("")
+        logging.error("Cannot provide reliable results due to contradictions in the rule base.")
+        return 1
+
     # Log actual evaluation results from exec
     logging.info("")
     header_color = "\033[95m"
@@ -106,11 +122,11 @@ def _run(argv: Optional[List[str]] = None) -> int:
     for label, status in results.items():
         logging.info("%s: %s", label, _colorize(status))
 
-    _log_evaluation_results(program)
+    _log_evaluation_results(program, config_data)
     return 0
 
 
-def _log_evaluation_results(program) -> None:
+def _log_evaluation_results(program, config_data: str = "") -> None:
     """Display which operators are used in the rule file."""
     import src.exec as exec_module
 
@@ -170,6 +186,10 @@ def _log_evaluation_results(program) -> None:
     _log("OR", has_or)
     _log("XOR", has_xor)
     _log("NOT", has_not)
+
+    # Check for IIF operator in source (it's expanded to two rules during parsing)
+    has_iif = "<=>" in config_data if config_data else False
+    _log("IIF", has_iif)
 
 
 def run_cli(argv: Optional[List[str]] = None) -> int:

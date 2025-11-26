@@ -1,0 +1,7 @@
+# AND operator - Multiple AND operations
+# D and E and F all true
+
+D + E + F => G
+
+=DEF
+?G

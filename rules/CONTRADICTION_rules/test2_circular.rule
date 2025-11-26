@@ -1,0 +1,13 @@
+# Contradiction test 2: Circular dependency
+# A → B → C → ¬A
+# Creates a logical contradiction loop
+
+A => B
+B => C
+C => !A
+
+=A
+
+?A
+?B
+?C

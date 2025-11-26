@@ -1,0 +1,8 @@
+# AND operator - One operand undetermined
+# H is true, I is unknown
+# Result should be FALSE (not enough to prove)
+
+H + I => J
+
+=H
+?J

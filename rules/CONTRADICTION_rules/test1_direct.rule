@@ -1,0 +1,10 @@
+# Contradiction test 1: Direct contradiction with initial fact
+# Z is true, Z implies NOT A
+# But A is also true (fact)
+# Should detect contradiction
+
+Z => !A
+
+=AZ
+
+?A

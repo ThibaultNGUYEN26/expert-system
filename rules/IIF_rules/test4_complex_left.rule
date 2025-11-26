@@ -1,0 +1,9 @@
+# Biconditional - Complex expression
+# (A + B) <=> C
+# If A and B are both true, then C is true
+# If C is true, then A and B must both be true
+
+(A + B) <=> C
+
+=AB
+?C

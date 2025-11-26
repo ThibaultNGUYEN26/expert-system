@@ -67,14 +67,29 @@ def main():
     test_cases: List[TestCase] = [
         # AND operator tests
         TestCase(
-            rules_dir / "AND_rules/test1.rule",
+            rules_dir / "AND_rules/test1_simple_and.rule",
             {"D": Status.TRUE},
             "AND: Simple A + B with facts"
         ),
         TestCase(
-            rules_dir / "AND_rules/test2.rule",
+            rules_dir / "AND_rules/test2_multiple_and.rule",
             {"G": Status.TRUE},
             "AND: Chained (D + E) + F"
+        ),
+        TestCase(
+            rules_dir / "AND_rules/test3_and_undetermined.rule",
+            {"J": Status.FALSE},
+            "AND: One operand undetermined"
+        ),
+        TestCase(
+            rules_dir / "AND_rules/test4_and_with_false.rule",
+            {"M": Status.FALSE},
+            "AND: One operand false"
+        ),
+        TestCase(
+            rules_dir / "AND_rules/test5_complex_chain.rule",
+            {"Z": Status.FALSE},
+            "AND: Complex chain"
         ),
         TestCase(
             rules_dir / "AND_rules/test6_triple_and.rule",
@@ -281,6 +296,38 @@ def main():
             rules_dir / "MIXED_rules/test8_chain_implications.rule",
             {"B": Status.TRUE, "D": Status.TRUE, "F": Status.TRUE, "H": Status.TRUE},
             "MIXED: Chain of implications"
+        ),
+
+        # IIF (biconditional) operator tests
+        TestCase(
+            rules_dir / "IIF_rules/test1_simple_iif.rule",
+            {"B": Status.TRUE},
+            "IIF: Simple A <=> B with A true"
+        ),
+        TestCase(
+            rules_dir / "IIF_rules/test2_reverse_iif.rule",
+            {"A": Status.TRUE},
+            "IIF: Reverse direction with B true"
+        ),
+        TestCase(
+            rules_dir / "IIF_rules/test3_both_false.rule",
+            {"A": Status.UNDETERMINED, "B": Status.UNDETERMINED},
+            "IIF: Both sides undetermined (circular)"
+        ),
+        TestCase(
+            rules_dir / "IIF_rules/test4_complex_left.rule",
+            {"C": Status.TRUE},
+            "IIF: Complex expression (A+B) <=> C"
+        ),
+        TestCase(
+            rules_dir / "IIF_rules/test5_complex_both.rule",
+            {"A": Status.TRUE, "C": Status.TRUE},
+            "IIF: Complex both sides"
+        ),
+        TestCase(
+            rules_dir / "IIF_rules/test6_chain_iif.rule",
+            {"B": Status.TRUE, "C": Status.TRUE},
+            "IIF: Chained biconditionals"
         ),
     ]
 

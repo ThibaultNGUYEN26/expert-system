@@ -1,0 +1,7 @@
+# AND operator - Simple case
+# A and B both true
+
+A + B => D
+
+=AB
+?D

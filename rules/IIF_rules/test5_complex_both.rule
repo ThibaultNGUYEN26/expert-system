@@ -1,0 +1,9 @@
+# Biconditional - Complex both sides
+# (A + B) <=> (C + D)
+# Both sides must have the same truth value
+
+(A + B) <=> (C + D)
+
+=ABCD
+?A
+?C

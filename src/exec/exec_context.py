@@ -18,6 +18,7 @@ class ExecContext:
     - status: memoisation + cycle detection for each symbol
     - verbose: if True, record reasoning steps
     - reasoning_log: list of reasoning explanation strings
+    - contradictions: list of detected contradictions
     """
     program: "Program"
 
@@ -27,6 +28,7 @@ class ExecContext:
     status: Dict[str, Status] = field(default_factory=dict)
     verbose: bool = False
     reasoning_log: List[str] = field(default_factory=list)
+    contradictions: List[str] = field(default_factory=list)
 
     # -------------- CONSTRUCTOR FROM PROGRAM --------------
 
@@ -102,3 +104,7 @@ class ExecContext:
         if self.verbose:
             prefix = "  " * indent
             self.reasoning_log.append(f"{prefix}{message}")
+
+    def add_contradiction(self, message: str) -> None:
+        """Record a detected contradiction."""
+        self.contradictions.append(message)
