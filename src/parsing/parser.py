@@ -110,8 +110,6 @@ class Parser:
             line_facts[symbol] = True
 
         self._consume_line_breaks()
-        if not line_facts:
-            raise self._error("Facts line must contain at least one fact symbol.")
         return line_facts
 
     def _parse_query_line(self) -> List[str]:
