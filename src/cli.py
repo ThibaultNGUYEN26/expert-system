@@ -42,6 +42,7 @@ def _run(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Run the expert system.")
     parser.add_argument("config", type=str, help="Path to the configuration file")
     parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose reasoning output")
+    parser.add_argument("--interactive", "-i", action="store_true", help="Enable interactive fact modification mode")
     args = parser.parse_args(argv)
 
     config_path = Path(args.config)
@@ -61,6 +62,10 @@ def _run(argv: Optional[List[str]] = None) -> int:
 
     log_program(program)
 
+    # Interactive mode loop
+    if args.interactive:
+        return _run_interactive_mode(program, args.verbose, config_data)
+
     # Build execution context and run the program
     try:
         ctx = ExecContext.from_program(program, verbose=args.verbose)
@@ -74,8 +79,14 @@ def _run(argv: Optional[List[str]] = None) -> int:
         logging.error("Execution error: %s", error)
         return 1
 
+    _display_results(ctx, results, program, config_data, args.verbose)
+    return 0
+
+
+def _display_results(ctx: ExecContext, results, program, config_data: str, verbose: bool) -> int:
+    """Display reasoning, contradictions, and results."""
     # Log verbose reasoning if enabled
-    if args.verbose and hasattr(ctx, 'reasoning_log') and ctx.reasoning_log:
+    if verbose and hasattr(ctx, 'reasoning_log') and ctx.reasoning_log:
         print("")
         header_color = "\033[95m"
         reset = "\033[0m"
@@ -123,7 +134,131 @@ def _run(argv: Optional[List[str]] = None) -> int:
         logging.info("%s: %s", label, _colorize(status))
 
     _log_evaluation_results(program, config_data)
-    return 0
+
+
+def _run_interactive_mode(program, verbose: bool, config_data: str) -> int:
+    """Run the expert system in interactive mode, allowing fact modification."""
+    from copy import deepcopy
+
+    cyan = "\033[96m"
+    green = "\033[92m"
+    yellow = "\033[93m"
+    red = "\033[91m"
+    blue = "\033[94m"
+    magenta = "\033[95m"
+    reset = "\033[0m"
+    bold = "\033[1m"
+
+    # Store original facts
+    original_facts = deepcopy(program.facts)
+    current_facts = deepcopy(program.facts)
+
+    print(f"\n{magenta}{'=' * 60}{reset}")
+    print(f"{magenta}{bold}INTERACTIVE FACT VALIDATION MODE{reset}")
+    print(f"{magenta}{'=' * 60}{reset}")
+    print(f"{cyan}Commands:{reset}")
+    print(f"  {green}set <symbol> <true|false>{reset} - Set a fact value")
+    print(f"  {green}unset <symbol>{reset}            - Remove a fact")
+    print(f"  {green}list{reset}                      - Show current facts")
+    print(f"  {green}reset{reset}                     - Reset to original facts")
+    print(f"  {green}run{reset}                       - Execute queries with current facts")
+    print(f"  {green}help{reset}                      - Show this help")
+    print(f"  {green}quit{reset} or {green}exit{reset}              - Exit interactive mode")
+    print(f"{magenta}{'=' * 60}{reset}\n")
+
+    while True:
+        try:
+            user_input = input(f"{blue}expert-system>{reset} ").strip()
+
+            if not user_input:
+                continue
+
+            parts = user_input.split()
+            command = parts[0].lower()
+
+            if command in ["quit", "exit", "q"]:
+                print(f"{yellow}Exiting interactive mode.{reset}")
+                return 0
+
+            elif command == "help":
+                print(f"\n{cyan}Available commands:{reset}")
+                print(f"  {green}set <symbol> <true|false>{reset} - Set a fact value")
+                print(f"  {green}unset <symbol>{reset}           - Remove a fact")
+                print(f"  {green}list{reset}                     - Show current facts")
+                print(f"  {green}reset{reset}                    - Reset to original facts")
+                print(f"  {green}run{reset}                      - Execute queries with current facts")
+                print(f"  {green}help{reset}                     - Show this help")
+                print(f"  {green}quit{reset} or {green}exit{reset}            - Exit interactive mode\n")
+
+            elif command == "list":
+                if current_facts:
+                    print(f"\n{cyan}Current facts:{reset}")
+                    for symbol, value in sorted(current_facts.items()):
+                        color = green if value else red
+                        print(f"  {symbol}: {color}{value}{reset}")
+                else:
+                    print(f"{yellow}No facts defined.{reset}")
+                print()
+
+            elif command == "reset":
+                current_facts = deepcopy(original_facts)
+                print(f"{green}Facts reset to original values.{reset}\n")
+
+            elif command == "set":
+                if len(parts) != 3:
+                    print(f"{red}Usage: set <symbol> <true|false>{reset}\n")
+                    continue
+
+                symbol = parts[1].upper()
+                value_str = parts[2].lower()
+
+                if value_str not in ["true", "false"]:
+                    print(f"{red}Value must be 'true' or 'false'{reset}\n")
+                    continue
+
+                if not symbol.isalpha() or len(symbol) != 1:
+                    print(f"{red}Symbol must be a single uppercase letter{reset}\n")
+                    continue
+
+                current_facts[symbol] = value_str == "true"
+                color = green if current_facts[symbol] else red
+                print(f"{green}Set {symbol} = {color}{current_facts[symbol]}{reset}\n")
+
+            elif command == "unset":
+                if len(parts) != 2:
+                    print(f"{red}Usage: unset <symbol>{reset}\n")
+                    continue
+
+                symbol = parts[1].upper()
+                if symbol in current_facts:
+                    del current_facts[symbol]
+                    print(f"{green}Removed fact {symbol}{reset}\n")
+                else:
+                    print(f"{yellow}Fact {symbol} not found{reset}\n")
+
+            elif command == "run":
+                # Create a modified program with current facts
+                modified_program = deepcopy(program)
+                modified_program.facts = current_facts
+
+                print(f"\n{magenta}Running queries with current facts...{reset}\n")
+
+                try:
+                    ctx = ExecContext.from_program(modified_program, verbose=verbose)
+                    results = solve.run_queries(ctx)
+                    _display_results(ctx, results, modified_program, config_data, verbose)
+                except Exception as error:
+                    print(f"{red}Execution error: {error}{reset}\n")
+
+            else:
+                print(f"{red}Unknown command: {command}{reset}")
+                print(f"{cyan}Type 'help' for available commands{reset}\n")
+
+        except KeyboardInterrupt:
+            print(f"\n{yellow}Use 'quit' or 'exit' to leave interactive mode{reset}\n")
+        except EOFError:
+            print(f"\n{yellow}Exiting interactive mode.{reset}")
+            return 0
 
 
 def _log_evaluation_results(program, config_data: str = "") -> None:
