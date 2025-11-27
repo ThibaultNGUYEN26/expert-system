@@ -42,16 +42,10 @@ def solve_symbol(ctx: "ExecContext", symbol: str, depth: int = 0) -> Status:
     status = ctx.get_status(symbol)
 
     if status is Status.TRUE:
-        if depth > 0:
-            ctx.log_reasoning(f"\033[92m✓ {symbol} is TRUE (already determined)\033[0m", depth)
         return Status.TRUE
     if status is Status.FALSE:
-        if depth > 0:
-            ctx.log_reasoning(f"\033[91m✗ {symbol} is FALSE (already determined)\033[0m", depth)
         return Status.FALSE
     if status is Status.UNDETERMINED:
-        if depth > 0:
-            ctx.log_reasoning(f"\033[93m⚠ {symbol} is UNDETERMINED (already determined)\033[0m", depth)
         return Status.UNDETERMINED
     if status is Status.IN_PROGRESS:
         # We came back to the same symbol while trying to prove it -> cycle
@@ -61,16 +55,10 @@ def solve_symbol(ctx: "ExecContext", symbol: str, depth: int = 0) -> Status:
     # 2) Base case: initial facts (both positive and negative)
     if ctx.is_fact_true(symbol):
         ctx.set_status(symbol, Status.TRUE)
-        ctx.log_reasoning(f"\033[92m✓ {symbol} is TRUE (given as fact)\033[0m", depth)
         return Status.TRUE
     if ctx.is_fact_false(symbol):
         ctx.set_status(symbol, Status.FALSE)
-        ctx.log_reasoning(f"\033[91m✗ {symbol} is FALSE (given as fact)\033[0m", depth)
         return Status.FALSE
-
-    # Log that we're evaluating this symbol
-    if depth > 0:
-        ctx.log_reasoning(f"\033[94m→ Evaluating {symbol}...\033[0m", depth)
 
     # 3) Mark as currently being processed (for cycle detection)
     ctx.set_status(symbol, Status.IN_PROGRESS)
@@ -82,21 +70,16 @@ def solve_symbol(ctx: "ExecContext", symbol: str, depth: int = 0) -> Status:
         condition_str = format_condition(rule.condition)
         conclusion_str = format_condition(rule.conclusion)
 
-        ctx.log_reasoning(f"\033[96mChecking rule: {condition_str} => {conclusion_str}\033[0m", depth)
-
         cond_status = eval_condition(ctx, rule.condition, depth + 1)
 
         if cond_status is Status.TRUE:
             # The rule's condition is satisfied
             import src.exec as exec_module
 
-            ctx.log_reasoning(f"\033[92m✓ Condition {condition_str} is TRUE\033[0m", depth + 1)
-
             # Check conclusion type and handle accordingly
             if isinstance(rule.conclusion, (exec_module.OrCondition, exec_module.XorCondition)):
                 # Ambiguous conclusion: mark all symbols in the conclusion as UNDETERMINED
                 conclusion_symbols = _extract_fact_symbols(rule.conclusion)
-                ctx.log_reasoning(f"\033[93m⚠ Conclusion is ambiguous ({conclusion_str}), marking {', '.join(sorted(conclusion_symbols))} as UNDETERMINED\033[0m", depth + 1)
                 for sym in conclusion_symbols:
                     if ctx.get_status(sym) == Status.UNKNOWN or ctx.get_status(sym) == Status.IN_PROGRESS:
                         ctx.set_status(sym, Status.UNDETERMINED)
@@ -106,7 +89,6 @@ def solve_symbol(ctx: "ExecContext", symbol: str, depth: int = 0) -> Status:
             elif isinstance(rule.conclusion, exec_module.AndCondition):
                 # AND conclusion: all symbols in the conclusion become TRUE
                 conclusion_symbols = _extract_fact_symbols(rule.conclusion)
-                ctx.log_reasoning(f"\033[92m✓ Setting all symbols in conclusion ({conclusion_str}) to TRUE: {', '.join(sorted(conclusion_symbols))}\033[0m", depth + 1)
                 for sym in conclusion_symbols:
                     if ctx.get_status(sym) in (Status.UNKNOWN, Status.IN_PROGRESS):
                         ctx.set_status(sym, Status.TRUE)
@@ -120,8 +102,6 @@ def solve_symbol(ctx: "ExecContext", symbol: str, depth: int = 0) -> Status:
                     if ctx.is_fact_false(symbol):
                         contradiction_msg = f"CONTRADICTION: Rule '{condition_str} => {conclusion_str}' tries to set {symbol}=TRUE, but {symbol}=FALSE is declared as initial fact"
                         ctx.add_contradiction(contradiction_msg)
-                        ctx.log_reasoning(f"\033[91m⚠ {contradiction_msg}\033[0m", depth + 1)
-                    ctx.log_reasoning(f"\033[92m✓ {symbol} is TRUE (from rule)\033[0m", depth + 1)
                     ctx.set_status(symbol, Status.TRUE)
                     return Status.TRUE
             elif isinstance(rule.conclusion, exec_module.NotCondition):
@@ -134,27 +114,56 @@ def solve_symbol(ctx: "ExecContext", symbol: str, depth: int = 0) -> Status:
                     if ctx.is_fact_true(symbol):
                         contradiction_msg = f"CONTRADICTION: Rule '{condition_str} => {conclusion_str}' tries to set {symbol}=FALSE, but {symbol}=TRUE is declared as initial fact"
                         ctx.add_contradiction(contradiction_msg)
-                        ctx.log_reasoning(f"\033[91m⚠ {contradiction_msg}\033[0m", depth + 1)
                     elif ctx.get_status(symbol) == Status.TRUE:
                         contradiction_msg = f"CONTRADICTION: Rule '{condition_str} => {conclusion_str}' tries to set {symbol}=FALSE, but {symbol} was already determined to be TRUE (circular dependency)"
                         ctx.add_contradiction(contradiction_msg)
-                        ctx.log_reasoning(f"\033[91m⚠ {contradiction_msg}\033[0m", depth + 1)
-                    ctx.log_reasoning(f"\033[91m✗ {symbol} is FALSE (negated in conclusion)\033[0m", depth + 1)
                     ctx.set_status(symbol, Status.FALSE)
                     return Status.FALSE
 
         elif cond_status is Status.UNDETERMINED:
             # If any rule's condition is undetermined, the conclusion is undetermined
-            ctx.log_reasoning(f"\033[93m⚠ Condition {condition_str} is UNDETERMINED\033[0m", depth + 1)
             ctx.set_status(symbol, Status.UNDETERMINED)
             return Status.UNDETERMINED
         else:
-            # Condition is FALSE, rule doesn't apply
-            ctx.log_reasoning(f"\033[91m✗ Condition {condition_str} is FALSE, rule doesn't apply\033[0m", depth + 1)
+            # Condition is FALSE
+            # For OR/XOR conclusions, if part of the conclusion is already TRUE,
+            # the implication is satisfied and other symbols are UNDETERMINED
+            import src.exec as exec_module
+            if isinstance(rule.conclusion, (exec_module.OrCondition, exec_module.XorCondition)):
+                conclusion_symbols = _extract_fact_symbols(rule.conclusion)
+                if symbol in conclusion_symbols:
+                    # Check if any other symbol in the conclusion is TRUE
+                    # We need to solve them, but avoid infinite recursion
+                    any_true = False
+                    for sym in conclusion_symbols:
+                        if sym != symbol:
+                            # Only solve if not currently being processed
+                            sym_status = ctx.get_status(sym)
+                            if sym_status == Status.IN_PROGRESS:
+                                # Skip to avoid recursion
+                                continue
+                            elif sym_status == Status.TRUE:
+                                any_true = True
+                                break
+                            elif sym_status == Status.UNKNOWN:
+                                # Try to solve it
+                                # Temporarily set current symbol to FALSE to break recursion
+                                ctx.set_status(symbol, Status.FALSE)
+                                other_status = solve_symbol(ctx, sym, depth + 1)
+                                ctx.set_status(symbol, Status.IN_PROGRESS)
+
+                                if other_status == Status.TRUE:
+                                    any_true = True
+                                    break
+
+                    if any_true:
+                        # The implication FALSE => (TRUE | symbol) is vacuously true
+                        # symbol can be either TRUE or FALSE -> UNDETERMINED
+                        ctx.set_status(symbol, Status.UNDETERMINED)
+                        return Status.UNDETERMINED
 
     # 5) No rule could prove this symbol
     ctx.set_status(symbol, Status.FALSE)
-    ctx.log_reasoning(f"\033[91m✗ {symbol} is FALSE (no rule could prove it)\033[0m", depth)
     return Status.FALSE
 
 
@@ -168,22 +177,9 @@ def run_queries(ctx: "ExecContext") -> Dict[str, Status]:
     results: Dict[str, Status] = {}
     for query in ctx.program.queries:
         # query is a string symbol name, e.g. "A"
-        ctx.log_reasoning(f"\033[95m{'=' * 60}\033[0m")
-        ctx.log_reasoning(f"\033[95mQuery: {query}\033[0m")
-        ctx.log_reasoning(f"\033[95m{'=' * 60}\033[0m")
         res = solve_symbol(ctx, query)
         results[query] = res
 
-        # Log final result for this query
-        if res is Status.TRUE:
-            status_str = f"\033[92m✓ {res.name}\033[0m"
-        elif res is Status.FALSE:
-            status_str = f"\033[91m✗ {res.name}\033[0m"
-        elif res is Status.UNDETERMINED:
-            status_str = f"\033[93m⚠ {res.name}\033[0m"
-        else:
-            status_str = res.name
-        ctx.log_reasoning(f"\n\033[1mFinal result: {query} is {status_str}\033[0m\n")
     return results
 
 

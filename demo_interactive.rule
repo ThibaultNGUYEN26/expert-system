@@ -1,9 +1,0 @@
-# Interactive Mode Demo
-# Rule: If it's raining OR cold, then wear a jacket
-# Undetermined conclusion: jacket OR umbrella
-
-(R | C) => (J | U)
-
-=R
-?J
-?U

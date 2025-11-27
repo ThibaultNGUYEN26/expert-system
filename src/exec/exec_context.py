@@ -16,8 +16,6 @@ class ExecContext:
     - facts as a set (for O(1) lookup)
     - rules_by_conclusion: index rules by conclusion symbol
     - status: memoisation + cycle detection for each symbol
-    - verbose: if True, record reasoning steps
-    - reasoning_log: list of reasoning explanation strings
     - contradictions: list of detected contradictions
     """
     program: "Program"
@@ -26,14 +24,12 @@ class ExecContext:
     facts_false: Set[str] = field(default_factory=set)
     rules_by_conclusion: Dict[str, List["Rule"]] = field(default_factory=dict)
     status: Dict[str, Status] = field(default_factory=dict)
-    verbose: bool = False
-    reasoning_log: List[str] = field(default_factory=list)
     contradictions: List[str] = field(default_factory=list)
 
     # -------------- CONSTRUCTOR FROM PROGRAM --------------
 
     @classmethod
-    def from_program(cls, program: Program, verbose: bool = False) -> "ExecContext":
+    def from_program(cls, program: Program) -> "ExecContext":
         """
         Build an ExecContext from a parsed Program.
 
@@ -43,7 +39,7 @@ class ExecContext:
         - build the rules_by_conclusion index
         - initialise each symbol's status to UNKNOWN
         """
-        ctx = cls(program=program, verbose=verbose)
+        ctx = cls(program=program)
 
         # Separate true and false facts
         ctx.facts_true = {symbol for symbol, value in program.facts.items() if value}
@@ -98,12 +94,6 @@ class ExecContext:
 
     def is_fact_false(self, symbol: str) -> bool:
         return symbol in self.facts_false
-
-    def log_reasoning(self, message: str, indent: int = 0) -> None:
-        """Add a reasoning step to the log if verbose mode is enabled."""
-        if self.verbose:
-            prefix = "  " * indent
-            self.reasoning_log.append(f"{prefix}{message}")
 
     def add_contradiction(self, message: str) -> None:
         """Record a detected contradiction."""
