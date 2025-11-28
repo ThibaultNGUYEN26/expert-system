@@ -1,15 +1,8 @@
-#!/usr/bin/env python3
-"""
-Unit test runner for the expert system.
-Tests all operators: AND, OR, XOR, NOT, and UNDETERMINED states.
-"""
-
 import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
 
-# Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.parsing import parse_program
