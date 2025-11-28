@@ -1,0 +1,8 @@
+# OR operator - Both true
+# A | B is TRUE when both are TRUE
+
+A | B => C
+
+=A
+=B
+?C

@@ -3,7 +3,16 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, List, Sequence
 
-from src.core import AndCondition, Condition, FactCondition, NotCondition, OrCondition, XorCondition
+from src.exec import (
+    AndCondition,
+    Condition,
+    FactCondition,
+    NotCondition,
+    OrCondition,
+    QueryCondition,
+    RuleCondition,
+    XorCondition,
+)
 
 from .lexer import Token, TokenType, lex
 from .validator import ensure_known_operator, ensure_valid_symbol, validate_balanced_parentheses
@@ -16,13 +25,13 @@ class Rule:
 
     Fields:
         condition (Condition): The logical condition (premises) that must be satisfied for the rule to apply.
-        conclusion (FactCondition): The fact or set of facts that are inferred if the condition is met.
-            Unlike 'condition', 'conclusion' is always a FactCondition, representing concrete facts.
+        conclusion (Condition): The fact or set of facts that are inferred if the condition is met.
+            Can be a FactCondition (single fact) or OrCondition/XorCondition for ambiguous conclusions.
         line (int): The line number in the source file where this rule was defined. Useful for error reporting.
     """
 
     condition: Condition
-    conclusion: FactCondition
+    conclusion: Condition
     line: int
 
 
@@ -131,7 +140,8 @@ class Parser:
         Parses a rule line, handling both unidirectional ('=>') and bidirectional ('<=>') operators.
 
         Returns a list of Rule objects. For unidirectional rules ('=>'), the list contains a single Rule.
-        For bidirectional rules ('<=>'), the list contains two Rules representing both directions.
+        For bidirectional rules ('<=>'), the list contains two Rules representing both directions:
+        - A <=> B becomes: A => B and B => A
 
         Raises:
             ParserError: If the rule syntax is invalid or required tokens are missing.
@@ -140,27 +150,18 @@ class Parser:
 
         if self._match(TokenType.IMPLIES):
             operator = self._previous()
-            conclusion_token = self._consume(TokenType.IDENT, "Expected conclusion symbol after '=>'.")
-            symbol = ensure_valid_symbol(conclusion_token.lexeme, conclusion_token)
-            conclusion = FactCondition(symbol)
+            conclusion_expr = self._parse_expression()
             self._consume_line_breaks()
-            return [Rule(condition=left_expression, conclusion=conclusion, line=operator.line)]
+            return [Rule(condition=left_expression, conclusion=conclusion_expr, line=operator.line)]
 
         if self._match(TokenType.IIF):
+            # Biconditional: A <=> B means A => B AND B => A
             operator = self._previous()
-            conclusion_token = self._consume(TokenType.IDENT, "Expected symbol after '<=>'.")
-            symbol = ensure_valid_symbol(conclusion_token.lexeme, conclusion_token)
-            if not isinstance(left_expression, FactCondition):
-                raise ParserError(
-                    "The left side of '<=>' must be a single fact symbol.", token=operator
-                )
-            left_symbol = left_expression.symbol
-            right_fact = FactCondition(symbol)
-            left_fact = FactCondition(left_symbol)
+            right_expression = self._parse_expression()
             self._consume_line_breaks()
             return [
-                Rule(condition=left_fact, conclusion=right_fact, line=operator.line),
-                Rule(condition=right_fact, conclusion=left_fact, line=operator.line),
+                Rule(condition=left_expression, conclusion=right_expression, line=operator.line),
+                Rule(condition=right_expression, conclusion=left_expression, line=operator.line),
             ]
 
         raise self._error("Expected '=>' or '<=>' after the rule condition.")

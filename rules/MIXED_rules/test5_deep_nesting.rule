@@ -1,0 +1,13 @@
+# MIXED - Deeply nested parentheses
+# ((A + B) | (C ^ D)) + E
+
+((A + B) | (C ^ D)) + E => F
+
+Z => !C
+Z => !D
+
+=A
+=B
+=Z
+=E
+?F

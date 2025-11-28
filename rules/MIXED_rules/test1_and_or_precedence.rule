@@ -1,0 +1,9 @@
+# MIXED - AND + OR without parentheses
+# Precedence: AND before OR
+# A + B | C means (A + B) | C
+
+A + B | C => D
+
+=A
+=B
+?D

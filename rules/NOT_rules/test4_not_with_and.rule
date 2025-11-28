@@ -1,0 +1,9 @@
+# NOT operator - NOT combined with AND
+# !(A + B) is TRUE when at least one of A or B is FALSE
+
+!(A + B) => C
+
+Z => !B
+
+=AZ
+?C

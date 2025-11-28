@@ -1,0 +1,12 @@
+# UNDETERMINED - Multiple rules with OR conclusions
+# Two different rules creating undetermined states
+
+A => B | C
+D => E | F
+
+=A
+=D
+?B
+?C
+?E
+?F

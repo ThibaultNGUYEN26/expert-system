@@ -1,0 +1,8 @@
+# UNDETERMINED - Simple XOR in conclusion
+# A => B ^ C means exactly one of B, C is true, but we don't know which
+
+A => B ^ C
+
+=A
+?B
+?C

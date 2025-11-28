@@ -1,0 +1,11 @@
+# Contradiction test 3: Multiple rules contradicting a fact
+# Both X and Y are true
+# X implies NOT A, Y implies NOT A
+# But A is true (fact)
+
+X => !A
+Y => !A
+
+=AXY
+
+?A

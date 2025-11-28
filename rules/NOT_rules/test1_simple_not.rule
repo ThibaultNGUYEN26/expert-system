@@ -1,0 +1,9 @@
+# NOT operator - Simple negation
+# !A is TRUE when A is FALSE
+
+!A => B
+
+Z => !A
+
+=Z
+?B

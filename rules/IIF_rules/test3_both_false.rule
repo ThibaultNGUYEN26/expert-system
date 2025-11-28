@@ -1,0 +1,10 @@
+# Biconditional - Circular dependency
+# A <=> B with neither as fact
+# Creates circular dependency: A needs B, B needs A
+# Result: UNDETERMINED
+
+A <=> B
+
+=Z
+?A
+?B

@@ -1,0 +1,9 @@
+# Biconditional - Simple case
+# A <=> B means A => B and B => A
+# If A is true, then B must be true
+# If B is true, then A must be true
+
+A <=> B
+
+=A
+?B

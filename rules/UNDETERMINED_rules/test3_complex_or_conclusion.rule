@@ -1,0 +1,9 @@
+# UNDETERMINED - Complex OR in conclusion with 3 variables
+# A => (B | C) | D creates undetermined B, C, D
+
+A => (B | C) | D
+
+=A
+?B
+?C
+?D

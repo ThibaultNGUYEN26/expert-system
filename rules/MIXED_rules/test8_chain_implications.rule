@@ -1,0 +1,18 @@
+# MIXED - Chain of implications with all operators
+# Complex reasoning chain
+
+A => B
+B + C => D
+D | E => F
+!F ^ G => H
+
+Z => !E
+
+=A
+=C
+=Z
+=G
+?B
+?D
+?F
+?H

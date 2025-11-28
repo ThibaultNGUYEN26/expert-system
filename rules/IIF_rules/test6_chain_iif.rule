@@ -1,0 +1,10 @@
+# Biconditional - Chain
+# A <=> B and B <=> C
+# All three should be equivalent
+
+A <=> B
+B <=> C
+
+=A
+?B
+?C

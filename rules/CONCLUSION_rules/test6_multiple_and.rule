@@ -1,0 +1,12 @@
+# Multiple rules with AND conclusions
+# Testing combinations
+
+A => B + C
+D => E + F
+
+=A
+=D
+?B
+?C
+?E
+?F

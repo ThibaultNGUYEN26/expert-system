@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List, Sequence
-
+from typing import List, Sequence, Set
 
 class Condition:
     """Base class that stores the textual representation of a condition."""
@@ -86,6 +85,20 @@ class QueryCondition:
     expression: Condition
 
 
+@dataclass(slots=True)
+class Program:
+    """
+    High-level representation of the parsed file:
+
+    - rules: all the 'A + B => C' rules
+    - facts: initial true symbols from the '=ABCD' line
+    - queries: all '?A', '?B', ... we need to evaluate
+    """
+    rules: List[RuleCondition]
+    facts: Set[str]
+    queries: List[QueryCondition]
+
+
 __all__ = [
     "Condition",
     "FactCondition",
@@ -95,4 +108,5 @@ __all__ = [
     "XorCondition",
     "RuleCondition",
     "QueryCondition",
+    "Program"
 ]

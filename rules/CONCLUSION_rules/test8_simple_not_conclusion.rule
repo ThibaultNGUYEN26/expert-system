@@ -1,0 +1,7 @@
+# Test NOT in conclusion
+# A => !B should make B false
+
+A => !B
+
+=A
+?B

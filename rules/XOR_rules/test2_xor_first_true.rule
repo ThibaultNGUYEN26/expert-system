@@ -1,0 +1,9 @@
+# XOR operator - Simple XOR with first true
+# A ^ B is TRUE when exactly one is TRUE
+
+A ^ B => C
+
+Z => !B
+
+=AZ
+?C

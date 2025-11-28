@@ -1,0 +1,10 @@
+# XOR operator - Chained XOR
+# (A ^ B) ^ C - testing associativity
+# TRUE XOR TRUE XOR TRUE = TRUE
+
+(A ^ B) ^ C => D
+
+=A
+=B
+=C
+?D

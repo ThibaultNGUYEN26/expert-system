@@ -1,0 +1,10 @@
+# UNDETERMINED - OR conclusion not triggered
+# A => B | C but A is FALSE, so B and C should be FALSE
+
+A => B | C
+
+Z => !A
+
+=Z
+?B
+?C

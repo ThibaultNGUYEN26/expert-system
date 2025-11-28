@@ -1,0 +1,11 @@
+# AND operator - One false makes all false
+# A + B + C with one false
+
+A + B + C => D
+
+Z => !B
+
+=A
+=Z
+=C
+?D

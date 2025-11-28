@@ -1,0 +1,8 @@
+# Test AND in conclusion
+# A => B + C should make both B and C true
+
+A => B + C
+
+=A
+?B
+?C

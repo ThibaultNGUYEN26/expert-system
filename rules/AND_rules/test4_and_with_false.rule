@@ -1,0 +1,9 @@
+# AND operator - One operand false
+# K is true, L is false
+# Result should be FALSE
+
+Z => !L
+K + L => M
+
+=KZ
+?M

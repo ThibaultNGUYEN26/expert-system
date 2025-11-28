@@ -1,0 +1,10 @@
+# AND conclusion not triggered
+# A => B + C but A is false, so B and C should be false
+
+A => B + C
+
+Z => !A
+
+=Z
+?B
+?C

@@ -1,0 +1,13 @@
+# AND operator - Complex chain with multiple rules
+# Multiple AND operations leading to final result
+
+A + B => C
+D + E + F => G
+H + !I => J
+K + !L => M
+C + G => X
+!X + J => Y
+Y + M => Z
+
+=ABDEFKH
+?Z

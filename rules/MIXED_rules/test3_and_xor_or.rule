@@ -1,0 +1,12 @@
+# MIXED - AND + XOR + OR
+# Complex mix: (A + B) ^ (C | D)
+
+(A + B) ^ (C | D) => E
+
+Z => !D
+
+=A
+=B
+=C
+=Z
+?E

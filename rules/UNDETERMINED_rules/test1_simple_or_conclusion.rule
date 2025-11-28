@@ -1,0 +1,8 @@
+# UNDETERMINED - Simple OR in conclusion
+# A => B | C means B and C are undetermined
+
+A => B | C
+
+=A
+?B
+?C

@@ -1,0 +1,11 @@
+# XOR operator - XOR with parentheses
+# A ^ (B ^ C) - testing different grouping
+# TRUE XOR (FALSE XOR TRUE) = TRUE XOR TRUE = FALSE
+
+A ^ (B ^ C) => D
+
+Z => !B
+
+=AZ
+=C
+?D

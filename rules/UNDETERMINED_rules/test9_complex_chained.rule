@@ -1,0 +1,11 @@
+# Complex undetermined test
+# E is true, which makes (F | G) true but both undetermined
+# Then we query H which depends on F
+
+E => F | G
+F + X => H
+
+=E
+?F
+?G
+?H

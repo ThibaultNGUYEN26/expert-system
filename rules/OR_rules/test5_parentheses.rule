@@ -1,0 +1,10 @@
+# OR operator - Parentheses grouping
+# (A | B) | C
+
+(A | B) | C => D
+
+Z => !A
+Z => !B
+
+=CZ
+?D
