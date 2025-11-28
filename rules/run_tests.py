@@ -26,12 +26,12 @@ class TestCase:
     description: str
 
 
-def run_test(test_case: TestCase) -> Tuple[bool, str]:
+def run_test(test_case: TestCase) -> Tuple[bool, str, Dict[str, Status], Dict[str, Status]]:
     """
     Run a single test case.
 
     Returns:
-        (success, message) tuple
+        (success, message, expected_results, actual_results) tuple
     """
     try:
         # Parse the rule file
@@ -46,17 +46,17 @@ def run_test(test_case: TestCase) -> Tuple[bool, str]:
         for query, expected_status in test_case.expected_results.items():
             actual_status = results.get(query)
             if actual_status != expected_status:
-                return False, f"Query '{query}': expected {expected_status.name}, got {actual_status.name if actual_status else 'None'}"
+                return False, f"Query '{query}': expected {expected_status.name}, got {actual_status.name if actual_status else 'None'}", test_case.expected_results, results
 
         # Check for unexpected queries
         for query in results:
             if query not in test_case.expected_results:
-                return False, f"Unexpected query result: {query} = {results[query].name}"
+                return False, f"Unexpected query result: {query} = {results[query].name}", test_case.expected_results, results
 
-        return True, "PASS"
+        return True, "PASS", test_case.expected_results, results
 
     except Exception as e:
-        return False, f"ERROR: {str(e)}"
+        return False, f"ERROR: {str(e)}", test_case.expected_results, {}
 
 
 def main():
@@ -341,29 +341,53 @@ def main():
     failed = 0
     errors = 0
 
+    # Group tests by category
+    categories = {}
     for test_case in test_cases:
-        success, message = run_test(test_case)
+        category = test_case.description.split(":")[0]
+        if category not in categories:
+            categories[category] = []
+        categories[category].append(test_case)
 
-        status_symbol = "✓" if success else "✗"
-        status_color = "\033[92m" if success else "\033[91m"
-        reset = "\033[0m"
+    # Run tests by category
+    for category, tests in categories.items():
+        print(f"\033[1m{category}\033[0m")
 
-        print(f"{status_color}{status_symbol}{reset} {test_case.description}")
-        if not success:
-            print(f"  {message}")
-            if "ERROR" in message:
-                errors += 1
+        for test_case in tests:
+            success, message, expected, actual = run_test(test_case)
+
+            status_symbol = "✓" if success else "✗"
+            status_color = "\033[92m" if success else "\033[91m"
+            reset = "\033[0m"
+
+            # Extract description after the category prefix
+            desc_parts = test_case.description.split(": ", 1)
+            desc = desc_parts[1] if len(desc_parts) > 1 else test_case.description
+
+            print(f"  {status_color}{status_symbol}{reset} {desc}")
+            if not success:
+                if "ERROR" not in message:
+                    # Show query name if available
+                    if message.startswith("Query '"):
+                        query_name = message.split("'")[1]
+                        print(f"    Query '{query_name}':")
+                    else:
+                        print(f"    {message}")
+                    # Show expected vs actual
+                    print(f"    \033[93mExpected:\033[0m {', '.join(f'{k}={v.name}' for k, v in expected.items())}")
+                    print(f"    \033[93mActual:  \033[0m {', '.join(f'{k}={v.name}' for k, v in actual.items())}")
+                    failed += 1
+                else:
+                    print(f"    {message}")
+                    errors += 1
             else:
-                failed += 1
-        else:
-            passed += 1
+                passed += 1
 
-        # Show file path for failed tests
-        if not success:
-            print(f"  File: {test_case.file_path.relative_to(rules_dir.parent)}")
-        print()
+            # Show file path for failed tests
+            if not success:
+                print(f"    File: {test_case.file_path.relative_to(rules_dir.parent)}")
 
-    # Summary
+        print()    # Summary
     print("=" * 80)
     total = passed + failed + errors
     print(f"Total: {total} tests")
