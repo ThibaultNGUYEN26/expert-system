@@ -14,6 +14,8 @@ if TYPE_CHECKING:
     from src.exec.status import Status
     from src.exec.exec_context import ExecContext
 
+from src.utils.program_logging import Colors
+
 
 @dataclass
 class ReasoningStep:
@@ -710,8 +712,8 @@ def visualize_reasoning(ctx: "ExecContext", program: "Program", results: Dict[st
     """
     visualizer = ReasoningVisualizer(ctx, program)
 
-    cyan = "\033[96m"
-    reset = "\033[0m"
+    cyan = Colors.CYAN
+    reset = Colors.RESET
 
     print(f"\n{cyan}REASONING EXPLANATIONS{reset}")
     print("=" * 70)

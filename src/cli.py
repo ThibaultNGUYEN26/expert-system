@@ -6,8 +6,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from src.parsing import LexerError, ParserError, ValidationError, parse_program
-from src.utils.conditions import Conditions
-from src.utils.program_logging import log_program
+from src.utils.program_logging import log_program, Colors
 from src.exec import solve
 from src.exec.exec_context import ExecContext
 from src.exec.status import Status
@@ -15,13 +14,13 @@ from src.exec.status import Status
 
 class _ColorFormatter(logging.Formatter):
     COLORS = {
-        "DEBUG": "\033[94m",  # Blue
-        "INFO": "\033[92m",  # Green
-        "WARNING": "\033[93m",  # Yellow
-        "ERROR": "\033[91m",  # Red
-        "CRITICAL": "\033[95m",  # Magenta
+        "DEBUG": Colors.BLUE,
+        "INFO": Colors.GREEN,
+        "WARNING": Colors.YELLOW,
+        "ERROR": Colors.RED,
+        "CRITICAL": Colors.MAGENTA,
     }
-    RESET = "\033[0m"
+    RESET = Colors.RESET
 
     def format(self, record: logging.LogRecord) -> str:
         if not record.getMessage():
@@ -86,9 +85,9 @@ def _display_results(ctx: ExecContext, results, program, config_data: str, reaso
     # Display contradictions if any were detected
     if hasattr(ctx, 'contradictions') and ctx.contradictions:
         print("")
-        error_color = "\033[91m"
-        warning_color = "\033[93m"
-        reset = "\033[0m"
+        error_color = Colors.RED
+        warning_color = Colors.YELLOW
+        reset = Colors.RESET
         print(f"{error_color}{'=' * 60}{reset}")
         print(f"{error_color}CONTRADICTIONS DETECTED{reset}")
         print(f"{error_color}{'=' * 60}{reset}")
@@ -136,11 +135,11 @@ def _log_evaluation_results(program, config_data: str = "") -> None:
     import src.exec as exec_module
 
     logging.info("")
-    header_color = "\033[95m"
-    label_color = "\033[96m"
-    true_color = "\033[92m"
-    false_color = "\033[91m"
-    reset = "\033[0m"
+    header_color = Colors.MAGENTA
+    label_color = Colors.CYAN
+    true_color = Colors.GREEN
+    false_color = Colors.RED
+    reset = Colors.RESET
 
     logging.info("%sOperators used in rules%s", header_color, reset)
 

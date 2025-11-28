@@ -16,6 +16,7 @@ from src.parsing import parse_program
 from src.exec.exec_context import ExecContext
 from src.exec import solve
 from src.exec.status import Status
+from src.utils.program_logging import Colors
 
 
 @dataclass
@@ -351,16 +352,14 @@ def main():
 
     # Run tests by category
     for category, tests in categories.items():
-        print(f"\033[1m{category}\033[0m")
+        print(Colors.color(category, Colors.BOLD))
 
         for test_case in tests:
             success, message, expected, actual = run_test(test_case)
 
             status_symbol = "✓" if success else "✗"
-            status_color = "\033[92m" if success else "\033[91m"
-            reset = "\033[0m"
-
-            # Extract description after the category prefix
+            status_color = Colors.GREEN if success else Colors.RED
+            reset = Colors.RESET            # Extract description after the category prefix
             desc_parts = test_case.description.split(": ", 1)
             desc = desc_parts[1] if len(desc_parts) > 1 else test_case.description
 
@@ -374,8 +373,8 @@ def main():
                     else:
                         print(f"    {message}")
                     # Show expected vs actual
-                    print(f"    \033[93mExpected:\033[0m {', '.join(f'{k}={v.name}' for k, v in expected.items())}")
-                    print(f"    \033[93mActual:  \033[0m {', '.join(f'{k}={v.name}' for k, v in actual.items())}")
+                    print(f"    {Colors.color('Expected:', Colors.YELLOW)} {', '.join(f'{k}={v.name}' for k, v in expected.items())}")
+                    print(f"    {Colors.color('Actual:  ', Colors.YELLOW)} {', '.join(f'{k}={v.name}' for k, v in actual.items())}")
                     failed += 1
                 else:
                     print(f"    {message}")
@@ -391,11 +390,11 @@ def main():
     print("=" * 80)
     total = passed + failed + errors
     print(f"Total: {total} tests")
-    print(f"\033[92mPassed: {passed}\033[0m")
+    print(Colors.color(f"Passed: {passed}", Colors.GREEN))
     if failed > 0:
-        print(f"\033[91mFailed: {failed}\033[0m")
+        print(Colors.color(f"Failed: {failed}", Colors.RED))
     if errors > 0:
-        print(f"\033[93mErrors: {errors}\033[0m")
+        print(Colors.color(f"Errors: {errors}", Colors.YELLOW))
     print("=" * 80)
 
     return 0 if (failed == 0 and errors == 0) else 1

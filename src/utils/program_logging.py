@@ -6,15 +6,40 @@ from typing import Dict, List
 from src.parsing import Program
 
 
-RESET = "\033[0m"
-CYAN = "\033[96m"
-YELLOW = "\033[93m"
-WHITE = "\033[97m"
-MAGENTA = "\033[95m"
+# Color constants - centralized for the entire project
+class Colors:
+    """ANSI color codes for terminal output."""
+    # Basic colors
+    RESET = "\033[0m"
+
+    # Status colors
+    GREEN = "\033[92m"   # Success, TRUE
+    RED = "\033[91m"     # Error, FALSE
+    YELLOW = "\033[93m"  # Warning, UNDETERMINED
+    BLUE = "\033[94m"    # Debug
+    CYAN = "\033[96m"    # Info, labels
+    MAGENTA = "\033[95m" # Headers, critical
+    WHITE = "\033[97m"   # Normal text
+
+    # Text formatting
+    BOLD = "\033[1m"
+
+    @classmethod
+    def color(cls, text: str, color: str) -> str:
+        """Wrap text with a color code."""
+        return f"{color}{text}{cls.RESET}"
+
+
+# Legacy constants for backward compatibility
+RESET = Colors.RESET
+CYAN = Colors.CYAN
+YELLOW = Colors.YELLOW
+WHITE = Colors.WHITE
+MAGENTA = Colors.MAGENTA
 
 
 def _color(text: str, color: str) -> str:
-    return f"{color}{text}{RESET}"
+    return Colors.color(text, color)
 
 
 def log_program(program: Program) -> None:
@@ -73,4 +98,4 @@ def _log_queries(queries: List[str]) -> None:
     )
 
 
-__all__ = ["log_program"]
+__all__ = ["log_program", "Colors"]

@@ -15,6 +15,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.parsing.parser import Program
 
+from src.utils.program_logging import Colors
+
 
 def run_interactive_mode(program: "Program", config_data: str) -> int:
     """
@@ -30,14 +32,14 @@ def run_interactive_mode(program: "Program", config_data: str) -> int:
     from src.exec.exec_context import ExecContext
     from src.exec import solve
 
-    cyan = "\033[96m"
-    green = "\033[92m"
-    yellow = "\033[93m"
-    red = "\033[91m"
-    blue = "\033[94m"
-    magenta = "\033[95m"
-    reset = "\033[0m"
-    bold = "\033[1m"
+    cyan = Colors.CYAN
+    green = Colors.GREEN
+    yellow = Colors.YELLOW
+    red = Colors.RED
+    blue = Colors.BLUE
+    magenta = Colors.MAGENTA
+    reset = Colors.RESET
+    bold = Colors.BOLD
 
     # Store original facts
     original_facts = deepcopy(program.facts)
